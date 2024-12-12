@@ -1,0 +1,1 @@
+# Converts GEDCOM file to a list individuals 
