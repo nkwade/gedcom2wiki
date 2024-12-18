@@ -6,8 +6,10 @@ from .templates import (
     render_source_page,
 )
 
+from ..gedcom.tree import FamilyTree
 
-def generate_wiki_pages(family_tree, output_path: str) -> None:
+
+def generate_wiki_pages(family_tree: FamilyTree, output_path: str) -> None:
     """
     Generate static HTML pages from the FamilyTree data structure.
 
