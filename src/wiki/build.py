@@ -3,6 +3,7 @@ from .templates import (
     render_index_page,
     render_family_page,
     render_person_page,
+    render_source_page,
 )
 
 
@@ -17,8 +18,10 @@ def generate_wiki_pages(family_tree, output_path: str) -> None:
     os.makedirs(output_path, exist_ok=True)
     families_dir = os.path.join(output_path, "families")
     persons_dir = os.path.join(output_path, "persons")
+    sources_dir = os.path.join(output_path, "sources")
     os.makedirs(families_dir, exist_ok=True)
     os.makedirs(persons_dir, exist_ok=True)
+    os.makedirs(sources_dir, exist_ok=True)
 
     # Generate index page
     index_html = render_index_page(family_tree)
@@ -40,3 +43,11 @@ def generate_wiki_pages(family_tree, output_path: str) -> None:
             os.path.join(persons_dir, f"{person_id}.html"), "w", encoding="utf-8"
         ) as f:
             f.write(person_html)
+
+    # Generate source pages
+    for source_id, source in family_tree.sources.items():
+        source_html = render_source_page(family_tree, source)
+        with open(
+            os.path.join(sources_dir, f"{source_id}.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(source_html)
