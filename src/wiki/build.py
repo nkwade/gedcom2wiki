@@ -1,17 +1,42 @@
-# Build wiki pages from a family tree object
 import os
-from gedcom.tree import FamilyTree
+from .templates import (
+    render_index_page,
+    render_family_page,
+    render_person_page,
+)
 
-def generate_wiki_pages(ft: FamilyTree, output_dir: str):
-    """Generate wiki pages for a family tree."""
-    # Create the output directory if it doesn't exist
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
 
-    # Generate a starting page
+def generate_wiki_pages(family_tree, output_path: str) -> None:
+    """
+    Generate static HTML pages from the FamilyTree data structure.
 
-    # Generate a page for each family
+    :param family_tree: A FamilyTree object as parsed from the GEDCOM file.
+    :param output_path: The directory where the HTML pages will be generated.
+    """
+    # Ensure output directory exists
+    os.makedirs(output_path, exist_ok=True)
+    families_dir = os.path.join(output_path, "families")
+    persons_dir = os.path.join(output_path, "persons")
+    os.makedirs(families_dir, exist_ok=True)
+    os.makedirs(persons_dir, exist_ok=True)
 
-    # Generate a page for each person
-    pass
+    # Generate index page
+    index_html = render_index_page(family_tree)
+    with open(os.path.join(output_path, "index.html"), "w", encoding="utf-8") as f:
+        f.write(index_html)
 
+    # Generate family pages
+    for fam_id, family in family_tree.families.items():
+        family_html = render_family_page(family_tree, family)
+        with open(
+            os.path.join(families_dir, f"{fam_id}.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(family_html)
+
+    # Generate person pages
+    for person_id, person in family_tree.persons.items():
+        person_html = render_person_page(family_tree, person)
+        with open(
+            os.path.join(persons_dir, f"{person_id}.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(person_html)

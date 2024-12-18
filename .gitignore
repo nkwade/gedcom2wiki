@@ -1,6 +1,7 @@
 # All GEDCOM files 
 *.ged
 wade.txt
+out/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
