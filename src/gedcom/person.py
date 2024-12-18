@@ -1,6 +1,6 @@
 from typing import Any
 from .fact import GedcomTag, Fact, TagValue
-import enum
+from .sex import Sex
 from datetime import datetime
 
 
@@ -61,9 +61,3 @@ class Person:
 
     def __repr__(self) -> str:
         return f"Person({self.xref_id}, famc={self.famc}, fams={self.fams}, sex={self.sex}, birthday={self.birthday}, death={self.death}, facts={self.facts})"
-
-
-class Sex(enum.Enum):
-    M = "Male"
-    F = "Female"
-    U = "Unknown"

@@ -3,6 +3,7 @@ from ..gedcom.tree import FamilyTree
 from ..gedcom.person import Person
 from ..gedcom.family import Family
 from ..gedcom.fact import GedcomTag
+from ..gedcom.source import Source
 
 
 def html_page(title: str, body_content: str) -> str:
@@ -73,7 +74,21 @@ def render_index_page(family_tree: FamilyTree) -> str:
         person_list += f'<li><a href="persons/{person_id}.html">{name_display}</a></li>'
     person_list += "</ul>"
 
-    content = f"<h1>Family Tree Index</h1>{header_info}{family_list}{person_list}"
+    source_list = "<h2>Sources</h2><ul>"
+    for source_id, source in family_tree.sources.items():
+        title_display = source.title if source.title else source_id
+        source_list += (
+            f'<li><a href="sources/{source_id}.html">{title_display}</a></li>'
+        )
+    source_list += "</ul>"
+
+    content = (
+        f"<h1>Family Tree Index</h1>"
+        f"{header_info}"
+        f"{family_list}"
+        f"{person_list}"
+        f"{source_list}"
+    )
     return html_page("Family Tree Index", content)
 
 
@@ -147,14 +162,10 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
     families_section = "<h2>Associated Families</h2><ul>"
     for fam_id in fams:
         if fam_id in family_tree.families:
-            families_section += (
-                f'<li>As spouse: <a href="../families/{fam_id}.html">{family_tree.families[fam_id].name}</a></li>'
-            )
+            families_section += f'<li>As spouse: <a href="../families/{fam_id}.html">{family_tree.families[fam_id].name}</a></li>'
     for fam_id in famc:
         if fam_id in family_tree.families:
-            families_section += (
-                f'<li>As child: <a href="../families/{fam_id}.html">{family_tree.families[fam_id].name}</a></li>'
-            )
+            families_section += f'<li>As child: <a href="../families/{fam_id}.html">{family_tree.families[fam_id].name}</a></li>'
     families_section += "</ul>"
 
     # Basic info
@@ -183,3 +194,22 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
 
     content = f"<h1>{name}</h1>{basic_info}{families_section}{facts_section}"
     return html_page(name, content)
+
+
+def render_source_page(family_tree: FamilyTree, source: Source) -> str:
+    """Render a source page with basic information."""
+    title = source.title if source.title else source.xref_id
+    origin = source.origin if source.origin else "Unknown"
+    publisher = source.publisher if source.publisher else "Unknown"
+
+    basic_info = f"""
+    <h2>Basic Information</h2>
+    <table>
+        <tr><th>Title</th><td>{title}</td></tr>
+        <tr><th>Origin</th><td>{origin}</td></tr>
+        <tr><th>Publisher</th><td>{publisher}</td></tr>
+    </table>
+    """
+
+    content = f"<h1>{title}</h1>{basic_info}"
+    return html_page(title, content)

@@ -1,7 +1,8 @@
 from .person import Person
 from .family import Family
 from .tree import FamilyTree
-from .fact import GedcomTag, TagValue
+from .fact import GedcomTag, TagValue, Fact
+from .source import Source
 
 
 def parse_gedcom(gedcom_text: str) -> FamilyTree:
@@ -13,6 +14,7 @@ def parse_gedcom(gedcom_text: str) -> FamilyTree:
     start_header = None
     start_people = None
     start_families = None
+    start_sources = None
     start_trailer = None
 
     # Loop through lines to find section starts
@@ -24,6 +26,8 @@ def parse_gedcom(gedcom_text: str) -> FamilyTree:
             start_people = i
         elif start_families is None and line.startswith("0 @F"):
             start_families = i
+        elif start_sources is None and line.startswith("0 @S"):
+            start_sources = i
         elif start_trailer is None and line.startswith("0 TRLR"):
             start_trailer = i
             break
@@ -48,8 +52,8 @@ def parse_gedcom(gedcom_text: str) -> FamilyTree:
 
     # Parse all the families
     if start_families is not None:
-        if start_trailer is not None:
-            families_data = lines[start_families:start_trailer]
+        if start_sources is not None:
+            families_data = lines[start_families:start_sources]
         else:
             families_data = lines[start_families:]
         families = parse_families(families_data)
@@ -57,6 +61,16 @@ def parse_gedcom(gedcom_text: str) -> FamilyTree:
 
     # Link the families
     ft.link_families()
+
+    if start_sources is not None:
+        if start_trailer is not None:
+            source_data = lines[start_sources:start_trailer]
+        else:
+            source_data = lines[start_sources:]
+
+        sources = parse_sources(source_data)
+
+        ft.sources = sources
 
     # Parse the trailer
     if start_trailer is not None:
@@ -158,6 +172,36 @@ def parse_header(data):
         header[tag] = value
 
     return header
+
+
+def parse_sources(data: list[str]) -> dict:
+    sources: dict[str, Source] = {}  # key: xref_id, value: Source
+    queue: list[tuple[int, Fact]] = []  # level, Fact
+    curr_source: Source = None  # type: ignore
+
+    i = 0
+    while i < len(data):
+        line = data[i].split(" ")
+        level = int(line[0])
+        if level == 0:  # source
+            if curr_source is not None:
+                curr_source.parse_facts()
+            curr_source = Source(line[1])
+            sources[line[1]] = curr_source
+        else:  # fact
+            fact = Fact(GedcomTag[line[1]], " ".join(line[2:]))
+            while len(queue) > 0 and level <= queue[-1][0]:
+                l, done = queue.pop(-1)
+                if l == 1:
+                    curr_source.facts.append(done)
+
+            if len(queue) > 0:
+                queue[-1][1].sub_facts[fact.tag] = fact
+
+            queue.append((level, fact))
+        i += 1
+
+    return sources
 
 
 def parse_trailer(data: list[str]) -> dict[str, str]:

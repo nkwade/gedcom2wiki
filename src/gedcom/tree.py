@@ -8,6 +8,7 @@ class FamilyTree:
         self.families: dict[str, Family] = {}
         self.header: dict = {}
         self.trailer: dict = {}
+        self.sources: dict = {}
 
     def link_families(self) -> None:
         """After parsing all individuals and families, link them."""
@@ -27,7 +28,7 @@ class FamilyTree:
                 ):
                     family.name = self.persons[family.wife].name
                 elif self.persons[family.wife].name is not None:
-                    family.name += " and " + self.persons[family.wife].name
+                    family.name += f" and {self.persons[family.wife].name}"  # type: ignore
             for c in family.children:
                 if c in self.persons:
                     self.persons[c].famc.append(fam_id)
