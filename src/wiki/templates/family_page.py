@@ -1,0 +1,60 @@
+from ...gedcom.tree import FamilyTree
+from ...gedcom.family import Family
+from ...gedcom.person import Person
+from .base_html import html_page
+
+
+def render_family_page(family_tree: FamilyTree, family: Family) -> str:
+    """Render a family page with a list of its members and basic details."""
+    husb_link = ""
+    wife_link = ""
+    children_links = []
+
+    if family.husb and family.husb in family_tree.persons:
+        husb = family_tree.persons[family.husb]
+        husb_name = husb.name if husb.name else family.husb
+        husb_link = f'<a href="../persons/{family.husb}.html">{husb_name}</a>'
+    if family.wife and family.wife in family_tree.persons:
+        wife = family_tree.persons[family.wife]
+        wife_name = wife.name if wife.name else family.wife
+        wife_link = f'<a href="../persons/{family.wife}.html">{wife_name}</a>'
+
+    for c in family.children:
+        if c in family_tree.persons:
+            child = family_tree.persons[c]
+            child_name = child.name if child.name else c
+            children_links.append(f'<a href="../persons/{c}.html">{child_name}</a>')
+
+    # Table of members
+    members_section = "<h2>Family Members</h2><table><tr><th>Role</th><th>Name</th><th>Birth</th><th>Death</th><th>Sex</th></tr>"
+
+    def person_row(role, p: Person):
+        birth = p.birthday if p.birthday else ""
+        death = p.death if p.death else ""
+        sex = p.sex.value if p.sex else ""
+        name_display = p.name if p.name else p.xref_id
+        return f"<tr><td>{role}</td><td><a href='../persons/{p.xref_id}.html'>{name_display}</a></td><td>{birth}</td><td>{death}</td><td>{sex}</td></tr>"
+
+    if family.husb and family.husb in family_tree.persons:
+        members_section += person_row("Husband", family_tree.persons[family.husb])
+    if family.wife and family.wife in family_tree.persons:
+        members_section += person_row("Wife", family_tree.persons[family.wife])
+    for c in family.children:
+        if c in family_tree.persons:
+            members_section += person_row("Child", family_tree.persons[c])
+
+    members_section += "</table>"
+
+    # Facts about the family if any
+    facts_section = ""
+    if family.facts or family.data:
+        facts_section = "<h2>Family Facts</h2><ul>"
+        for fact in family.facts:
+            facts_section += f"<li>{fact}</li>"
+        for tag, vals in family.data.items():
+            for v in vals:
+                facts_section += f"<li>{tag}: {v}</li>"
+        facts_section += "</ul>"
+
+    content = f"<h1>{family.xref_id}</h1>{members_section}{facts_section}"
+    return html_page(f"Family {family.xref_id}", content)
