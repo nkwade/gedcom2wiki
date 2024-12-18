@@ -12,21 +12,21 @@ class Person:
         self.facts: list[Fact] = []
 
         # Common facts that nearly everyone has:
+        self.name: str | None = None
         self.sex: Sex | None = None
         self.birthday: datetime | str | None = None
         self.death: datetime | str = "Present"
 
     def parse_tag_values(self, tvs: list[TagValue]) -> None:
-        # TODO: Implement this method
-        # This will parse the tag values into the appropriate fields for common tags like NAME, SEX, BIRTH, DEATH, etc.
         i = 0
-        queue: list[tuple[int, Fact]] = []
+        queue: list[tuple[int, Fact]] = []  # level, Fact
 
         while i < len(tvs):
             tv = tvs[i]
-            while tv.level <= queue[-1][0]:
-                done = queue.pop(-1)[1]
-                self.parse_fact(done)
+            while len(queue) > 0 and tv.level <= queue[-1][0]:
+                level, done = queue.pop(-1)
+                if level == 1: # all subfacts stored in fact so we only want to keep track of level 1 facts for people
+                    self.parse_fact(done)
 
             fact = Fact(tv.tag, tv.value)
 
@@ -34,6 +34,13 @@ class Person:
                 queue[-1][1].sub_facts[fact.tag] = fact
 
             queue.append((tv.level, fact))
+            i += 1
+
+        # Finish the last fact left in the queue
+        while len(queue) != 0:
+            level, done = queue.pop(-1)
+            if level == 1:
+                self.parse_fact(done)
 
     def parse_fact(self, fact: Fact) -> None:
         if fact.tag == GedcomTag.SEX:
@@ -43,13 +50,17 @@ class Person:
             self.birthday = fact.sub_facts[GedcomTag.DATE].value
         elif fact.tag == GedcomTag.DEAT and GedcomTag.DATE in fact.sub_facts.keys():
             self.death = fact.sub_facts[GedcomTag.DATE].value
-        else:
-            pass #TODO: add any other facts I want to parse here
+        elif fact.tag == GedcomTag.NAME:
+            self.name = fact.value
+        # TODO: add any other facts I want to parse here
+        
+        self.facts.append(fact)
 
-    def __repr__(self):
-        return f"Person({self.xref_id}, famc={self.famc}, fams={self.fams}), data={self.data}, tag_values={self.tag_values}"
+    def __repr__(self) -> str:
+        return f"Person({self.xref_id}, famc={self.famc}, fams={self.fams}, sex={self.sex}, birthday={self.birthday}, death={self.death}, facts={self.facts})"
 
 
 class Sex(enum.Enum):
-    MALE = "M"
-    FEMALE = "F"
+    M = "Male"
+    F = "Female"
+    U = "Unknown"

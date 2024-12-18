@@ -125,6 +125,7 @@ class GedcomTag(enum.Enum):
     _RTLSAVE = "Right-to-Left Save"
     _UID = "Unique ID"
     _UPD = "Update"
+    _TYPE = "Source Type"
 
     @classmethod
     def _missing_(cls, value):

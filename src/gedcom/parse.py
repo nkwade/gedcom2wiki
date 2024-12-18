@@ -8,43 +8,61 @@ def parse_gedcom(gedcom_text: str) -> FamilyTree:
     lines = gedcom_text.splitlines()
     ft = FamilyTree()
 
-    # Parse the header
-    # starts with a 0 and goes until the first INDI
-    i = 1
-    data = []
-    while not lines[i].startswith("0 @I"):
-        data.append(lines[i])
+    # Initialize variables
+    i = 0
+    start_header = None
+    start_people = None
+    start_families = None
+    start_trailer = None
+
+    # Loop through lines to find section starts
+    while i < len(lines):
+        line = lines[i]
+        if start_header is None and not line.startswith("0 @"):
+            start_header = i
+        elif start_people is None and line.startswith("0 @I"):
+            start_people = i
+        elif start_families is None and line.startswith("0 @F"):
+            start_families = i
+        elif start_trailer is None and line.startswith("0 TRLR"):
+            start_trailer = i
+            break
         i += 1
-    header = parse_header(data)
-    ft.header = header
+
+    # Parse the header
+    if start_header is not None and start_people is not None:
+        header_data = lines[start_header:start_people]
+        header = parse_header(header_data)
+        ft.header = header
 
     # Parse all the people
-    data = []
-    while i < len(lines) and not lines[i].startswith("0 @F"):
-        data.append(lines[i])
-        i += 1
-    persons = parse_persons(data)
-    ft.persons = {p.xref_id: p for p in persons}
+    if start_people is not None:
+        if start_families is not None:
+            people_data = lines[start_people:start_families]
+        elif start_trailer is not None:
+            people_data = lines[start_people:start_trailer]
+        else:
+            people_data = lines[start_people:]
+        persons = parse_persons(people_data)
+        ft.persons = {p.xref_id: p for p in persons}
 
     # Parse all the families
-    data = []
-    while i < len(lines) and not lines[i].startswith("0 @S"):
-        data.append(lines[i])
-        i += 1
-    families = parse_families(data)
-    ft.families = {f.xref_id: f for f in families}
+    if start_families is not None:
+        if start_trailer is not None:
+            families_data = lines[start_families:start_trailer]
+        else:
+            families_data = lines[start_families:]
+        families = parse_families(families_data)
+        ft.families = {f.xref_id: f for f in families}
 
     # Link the families
     ft.link_families()
 
-    # Parse the sources and repositories
-    # TODO: finish adding the sources to a source list
-    while i < len(lines) and not lines[i].startswith("0 @T"):
-        i += 1
-
     # Parse the trailer
-    trailer = parse_trailer(lines[i:])
-    ft.trailer = trailer
+    if start_trailer is not None:
+        trailer_data = lines[start_trailer:]
+        trailer = parse_trailer(trailer_data)
+        ft.trailer = trailer
 
     return ft
 
