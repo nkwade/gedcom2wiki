@@ -23,6 +23,7 @@ if __name__ == "__main__":
         print("Usage: python extract_tags.py filename.ged")
     else:
         tags = extract_tags(sys.argv[1])
+        tags = sorted(tags)
         with open("tags.txt", "w") as file:
             for tag in tags:
                 file.write(tag + "\n")
