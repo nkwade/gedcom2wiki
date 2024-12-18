@@ -10,6 +10,7 @@ class Family:
         self.children: list[str] = []
         self.facts: list[Any] = []  # Store facts like MARR, DIV, etc.
         self.data: dict[str, list[Any]] = {}
+        self.name: str | None = xref_id
 
     def add_data(self, tag: str, value: Any):
         if tag not in self.data:
