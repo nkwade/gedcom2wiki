@@ -2,6 +2,7 @@ from typing import List
 from ..gedcom.tree import FamilyTree
 from ..gedcom.person import Person
 from ..gedcom.family import Family
+from ..gedcom.fact import GedcomTag
 
 
 def html_page(title: str, body_content: str) -> str:
@@ -63,7 +64,7 @@ def render_index_page(family_tree: FamilyTree) -> str:
 
     family_list = "<h2>Families</h2><ul>"
     for fam_id, family in family_tree.families.items():
-        family_list += f'<li><a href="families/{fam_id}.html">{fam_id}</a></li>'
+        family_list += f'<li><a href="families/{fam_id}.html">{family.name}</a></li>'
     family_list += "</ul>"
 
     person_list = "<h2>People</h2><ul>"
@@ -147,12 +148,12 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
     for fam_id in fams:
         if fam_id in family_tree.families:
             families_section += (
-                f'<li>As spouse: <a href="../families/{fam_id}.html">{fam_id}</a></li>'
+                f'<li>As spouse: <a href="../families/{fam_id}.html">{family_tree.families[fam_id].name}</a></li>'
             )
     for fam_id in famc:
         if fam_id in family_tree.families:
             families_section += (
-                f'<li>As child: <a href="../families/{fam_id}.html">{fam_id}</a></li>'
+                f'<li>As child: <a href="../families/{fam_id}.html">{family_tree.families[fam_id].name}</a></li>'
             )
     families_section += "</ul>"
 
@@ -175,9 +176,9 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
         if fact.sub_facts:
             sub_facts_str = "<ul>"
             for sf_tag, sf_value in fact.sub_facts.items():
-                sub_facts_str += f"<li>{sf_tag.name}: {sf_value.value}</li>"
+                sub_facts_str += f"<li>{sf_tag.value}: {sf_value.value}</li>"
             sub_facts_str += "</ul>"
-        facts_section += f"<li>{fact.tag.name}: {fact.value}{sub_facts_str}</li>"
+        facts_section += f"<li>{fact.tag.value}: {fact.value}{sub_facts_str}</li>"
     facts_section += "</ul>"
 
     content = f"<h1>{name}</h1>{basic_info}{families_section}{facts_section}"

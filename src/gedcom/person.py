@@ -15,7 +15,7 @@ class Person:
         self.name: str | None = None
         self.sex: Sex | None = None
         self.birthday: datetime | str | None = None
-        self.death: datetime | str = "Present"
+        self.death: datetime | str = "Alive"
 
     def parse_tag_values(self, tvs: list[TagValue]) -> None:
         i = 0
@@ -25,7 +25,9 @@ class Person:
             tv = tvs[i]
             while len(queue) > 0 and tv.level <= queue[-1][0]:
                 level, done = queue.pop(-1)
-                if level == 1: # all subfacts stored in fact so we only want to keep track of level 1 facts for people
+                if (
+                    level == 1
+                ):  # all subfacts stored in fact so we only want to keep track of level 1 facts for people
                     self.parse_fact(done)
 
             fact = Fact(tv.tag, tv.value)
@@ -51,9 +53,10 @@ class Person:
         elif fact.tag == GedcomTag.DEAT and GedcomTag.DATE in fact.sub_facts.keys():
             self.death = fact.sub_facts[GedcomTag.DATE].value
         elif fact.tag == GedcomTag.NAME:
+            fact.value = "".join([c for c in fact.value if c != '/'])
             self.name = fact.value
         # TODO: add any other facts I want to parse here
-        
+
         self.facts.append(fact)
 
     def __repr__(self) -> str:
