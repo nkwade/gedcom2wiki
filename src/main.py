@@ -1,12 +1,14 @@
 import argparse
 
-from gedcom.parse import parse_gedcom
-from gedcom.tree import FamilyTree
+from .gedcom.parse import parse_gedcom  # type: ignore
+from .gedcom.tree import FamilyTree  # type: ignore
 
-from graph import generate_family_graph
+from .graph import generate_family_graph  # type: ignore
 
-from wiki.build import generate_wiki_pages
+from .wiki.build import generate_wiki_pages  # type: ignore
 import sys
+
+import time
 
 
 def main(
@@ -15,6 +17,9 @@ def main(
     graph: bool = False,
     verbose: bool = True,
 ) -> None:
+    
+    start = time.time()
+
     # Parse GEDCOM file
     with open(ged_path, encoding="utf-8", errors="ignore") as f:
         gedcom_text = f.read()
@@ -31,15 +36,13 @@ def main(
     # Generate wiki pages for family tree
     generate_wiki_pages(ft, output_path)
 
+    print(f"Total Time: {time.time() - start:.2f} Seconds")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="GEDCOM to CSV")
-    parser.add_argument(
-        "--ged_path", type=str, help="Path to GEDCOM file"
-    )
-    parser.add_argument(
-        "--output_path", type=str, help="Path to output CSV file"
-    )
+    parser.add_argument("--ged_path", type=str, help="Path to GEDCOM file")
+    parser.add_argument("--output_path", type=str, help="Path to output CSV file")
     parser.add_argument(
         "--graph",
         action="store_true",
@@ -54,12 +57,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     main_kwargs = {}
     if args.ged_path:
-        main_kwargs['ged_path'] = args.ged_path
+        main_kwargs["ged_path"] = args.ged_path
     if args.output_path:
-        main_kwargs['output_path'] = args.output_path
+        main_kwargs["output_path"] = args.output_path
     if args.graph:
-        main_kwargs['graph'] = args.graph
+        main_kwargs["graph"] = args.graph
     if args.verbose:
-        main_kwargs['verbose'] = args.verbose
+        main_kwargs["verbose"] = args.verbose
 
     main(**main_kwargs)
