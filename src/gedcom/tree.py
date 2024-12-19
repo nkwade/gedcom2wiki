@@ -18,8 +18,6 @@ class FamilyTree:
             if family.wife in self.persons:
                 self.persons[family.wife].fams.append(fam_id)
 
-            print(family)
-
             if family.husb and family.wife:
                 family.name = f"{self.persons[family.husb].name} and {self.persons[family.wife].name}"
             elif family.husb and not family.wife:

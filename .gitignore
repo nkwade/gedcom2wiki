@@ -2,6 +2,7 @@
 *.ged
 wade.txt
 out/
+.VSCodeCounter/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

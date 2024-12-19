@@ -151,6 +151,8 @@ def parse_family(family: Family, f_data: list[str]) -> Family:
         value = " ".join(line.split(" ")[2:])
         tag_values.append(TagValue(level, tag, value))
 
+    remaining_tvs: list[TagValue] = []
+
     for tag_value in tag_values:
         if tag_value.tag == GedcomTag.HUSB:
             family.husb = tag_value.value
@@ -159,7 +161,9 @@ def parse_family(family: Family, f_data: list[str]) -> Family:
         elif tag_value.tag == GedcomTag.CHIL:
             family.children.append(tag_value.value)
         else:
-            family.add_data(tag_value.tag.name, tag_value.value)
+            remaining_tvs.append(tag_value)
+
+    family.parse_data(remaining_tvs)
 
     return family
 
