@@ -1,6 +1,7 @@
 from ...gedcom.tree import FamilyTree
 from ...gedcom.family import Family
 from ...gedcom.person import Person
+from ...gedcom.fact import Fact
 from .base_html import html_page
 
 
@@ -47,14 +48,22 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
 
     # Facts about the family if any
     facts_section = ""
-    if family.facts or family.data:
+    if family.facts:
+
+        def render_fact(fact: Fact):
+            html = f"<li>{fact.tag.value}: {fact.value}"
+            if fact.sub_facts:
+                html += "<ul>"
+                for sub_fact in fact.sub_facts.values():
+                    html += render_fact(sub_fact)
+                html += "</ul>"
+            html += "</li>"
+            return html
+
         facts_section = "<h2>Family Facts</h2><ul>"
         for fact in family.facts:
-            facts_section += f"<li>{fact}</li>"
-        for tag, vals in family.data.items():
-            for v in vals:
-                facts_section += f"<li>{tag}: {v}</li>"
+            facts_section += render_fact(fact)
         facts_section += "</ul>"
 
-    content = f"<h1>{family.xref_id}</h1>{members_section}{facts_section}"
-    return html_page(f"Family {family.xref_id}", content)
+    content = f"<h1>Family Of {family.name}</h1>{members_section}{facts_section}"
+    return html_page(f"Family {family.name}", content)

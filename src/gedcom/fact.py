@@ -1,5 +1,6 @@
 import enum
 
+
 class GedcomTag(enum.Enum):
     BAPM = "Baptism"
     CHR = "Christening"

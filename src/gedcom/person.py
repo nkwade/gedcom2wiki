@@ -9,7 +9,7 @@ class Person:
         self.xref_id = xref_id
         self.famc: list[str] = []  # Family IDs where this person is a child
         self.fams: list[str] = []  # Family IDs where this person is a spouse
-        self.facts: list[Fact] = []
+        self.facts: list[Fact] = []  # List of facts that go with this person
 
         # Common facts that nearly everyone has:
         self.name: str | None = None
@@ -53,8 +53,9 @@ class Person:
         elif fact.tag == GedcomTag.DEAT and GedcomTag.DATE in fact.sub_facts.keys():
             self.death = fact.sub_facts[GedcomTag.DATE].value
         elif fact.tag == GedcomTag.NAME:
-            fact.value = "".join([c for c in fact.value if c != '/'])
-            self.name = fact.value
+            fact.value = "".join([c for c in fact.value if c != "/"])
+            if fact.value != "":
+                self.name = fact.value
         # TODO: add any other facts I want to parse here
 
         self.facts.append(fact)
