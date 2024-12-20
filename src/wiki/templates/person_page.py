@@ -112,13 +112,13 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
         date_fact = fact.sub_facts.get(GedcomTag.DATE, None)
         if date_fact:
             fact_year = extract_year_from_string(date_fact.value)
-            if fact_year and birth_year is not None:
+            if fact_year is not None and birth_year is not None:
                 # Categorize by year
-                if fact_year <= early_end:
+                if fact_year <= early_end:  # type: ignore
                     early_life_facts.append(fact)
-                elif fact_year <= mid_end:
+                elif fact_year <= mid_end:  # type: ignore
                     mid_life_facts.append(fact)
-                elif fact_year <= late_end:
+                elif fact_year <= late_end:  # type: ignore
                     late_life_facts.append(fact)
                 else:
                     other_facts.append(fact)

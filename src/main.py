@@ -3,7 +3,7 @@ import argparse
 from .gedcom.parse import parse_gedcom  # type: ignore
 from .gedcom.tree import FamilyTree  # type: ignore
 
-from .graph import generate_family_graph  # type: ignore
+from .graph.tree_builder import generate_hierarchical_tree  # type: ignore
 
 from .wiki.build import generate_wiki_pages  # type: ignore
 import sys
@@ -17,7 +17,7 @@ def main(
     graph: bool = False,
     verbose: bool = True,
 ) -> None:
-    
+
     start = time.time()
 
     # Parse GEDCOM file
@@ -26,7 +26,7 @@ def main(
     ft: FamilyTree = parse_gedcom(gedcom_text)
 
     if graph:
-        generate_family_graph(ft)
+        generate_hierarchical_tree(ft, "out/graph/")
 
     if verbose:
         with open("out/verbose.txt", "w", encoding="utf-8", errors="ignore") as f:
