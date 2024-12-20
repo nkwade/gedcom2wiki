@@ -2,6 +2,9 @@ from typing import Any
 from .fact import GedcomTag, Fact, TagValue
 from .sex import Sex
 from datetime import datetime
+from PIL import Image
+import requests
+from io import BytesIO
 
 
 class Person:
@@ -16,6 +19,9 @@ class Person:
         self.sex: Sex | None = None
         self.birthday: datetime | str | None = None
         self.death: datetime | str = "Alive"
+        self.images: list[Image.Image] = (
+            []
+        )  # all images for the person #TODO: attribute images to their respective fact
 
     def parse_tag_values(self, tvs: list[TagValue]) -> None:
         i = 0
@@ -31,6 +37,15 @@ class Person:
                     self.parse_fact(done)
 
             fact = Fact(tv.tag, tv.value)
+
+            if (
+                fact.tag == GedcomTag.FORM
+                and len(tvs) > i + 1
+                and tvs[i + 1].tag == GedcomTag.FILE
+            ):
+                image: Image.Image | None = self.save_image(tvs[i + 1].value)
+                if image is not None:
+                    self.images.append(image)
 
             if len(queue) > 0:
                 queue[-1][1].sub_facts[fact.tag] = fact
@@ -59,6 +74,16 @@ class Person:
         # TODO: add any other facts I want to parse here
 
         self.facts.append(fact)
+
+    def save_image(self, link: str) -> Image.Image | None:
+        try:
+            response = requests.get(link)
+            image = Image.open(BytesIO(response.content))
+            # image.show()
+            return image
+        except Exception as e:  # no access to images
+            print(e.__str__())
+            return None
 
     def __repr__(self) -> str:
         return f"Person({self.xref_id}, famc={self.famc}, fams={self.fams}, sex={self.sex}, birthday={self.birthday}, death={self.death}, facts={self.facts})"

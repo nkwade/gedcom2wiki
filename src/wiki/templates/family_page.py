@@ -37,9 +37,9 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
         return f"<tr><td>{role}</td><td><a href='../persons/{p.xref_id}.html'>{name_display}</a></td><td>{birth}</td><td>{death}</td><td>{sex}</td></tr>"
 
     if family.husb and family.husb in family_tree.persons:
-        members_section += person_row("Husband", family_tree.persons[family.husb])
+        members_section += person_row("Father", family_tree.persons[family.husb])
     if family.wife and family.wife in family_tree.persons:
-        members_section += person_row("Wife", family_tree.persons[family.wife])
+        members_section += person_row("Mother", family_tree.persons[family.wife])
     for c in family.children:
         if c in family_tree.persons:
             members_section += person_row("Child", family_tree.persons[c])

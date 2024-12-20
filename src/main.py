@@ -12,7 +12,7 @@ import time
 
 
 def main(
-    ged_path: str = "C:\\Users\\beake\\Documents\\dev\\gedcom2wiki\\wade.txt",
+    ged_path: str = "C:\\Users\\beake\\Documents\\dev\\gedcom2wiki\\wade.ged",
     output_path: str = "out/",
     graph: bool = False,
     verbose: bool = True,
