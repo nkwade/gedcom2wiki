@@ -2,20 +2,35 @@ from .fact import Fact, GedcomTag
 
 
 class Source:
-    def __init__(self, xref_id: str) -> None:
-        self.xref_id: str = xref_id
-        self.title: str | None = None
-        self.origin: str | None = None
-        self.publisher: str | None = None
-        self.link: str | None = None
-        self.facts: list[Fact] = []
+    def __init__(self, fact: Fact) -> None:
+        self.xref_id: str = fact.value
+        self.title: str = "Unknown"
+        self.origin: str = "Unknown"
+        self.publisher: str = "Unknown"
+        self.link: str = "Unknown"
+        self.facts: list[Fact] = fact.sub_facts
 
-    def parse_facts(self):
-        for fact in self.facts:
-            if fact.tag == GedcomTag.TITL:
-                self.title = fact.value
-            elif fact.tag == GedcomTag._TYPE:
-                self.origin = fact.value
-            elif fact.tag == GedcomTag.PUBL:
-                self.publisher = fact.value
-            #TODO: get link
+        self.parse_facts()
+
+    def parse_facts(self) -> None:
+        to_remove: list[Fact] = []  # remove used facts that have no subfacts
+        for sub in self.facts:
+            if sub.tag == GedcomTag.TITL:
+                self.title = sub.value
+                to_remove.append(sub)
+
+            if sub.tag == GedcomTag._TYPE:
+                self.origin = sub.value
+                to_remove.append(sub)
+
+            if sub.tag == GedcomTag.PUBL:
+                self.publisher = sub.value
+                to_remove.append(sub)
+
+            if sub.tag == GedcomTag.FILE:
+                self.link = sub.value
+                to_remove.append(sub)
+
+        for fact in to_remove:
+            if len(fact.sub_facts) == 0:
+                self.facts.remove(fact)

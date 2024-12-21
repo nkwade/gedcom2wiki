@@ -1,14 +1,11 @@
 import argparse
-
-from .gedcom.parse import parse_gedcom  # type: ignore
-from .gedcom.tree import FamilyTree  # type: ignore
-
-from .graph.tree_builder import generate_hierarchical_tree  # type: ignore
-
-from .wiki.build import generate_wiki_pages  # type: ignore
 import sys
-
 import time
+
+from gedcom.tree import FamilyTree
+from graph.tree_builder import generate_hierarchical_tree
+from gedcom.parse import parse
+from wiki.build import generate_wiki_pages
 
 
 def main(
@@ -21,9 +18,11 @@ def main(
     start = time.time()
 
     # Parse GEDCOM file
-    with open(ged_path, encoding="utf-8", errors="ignore") as f:
-        gedcom_text = f.read()
-    ft: FamilyTree = parse_gedcom(gedcom_text)
+    ft: FamilyTree | None = parse(ged_path)
+
+    if not ft:
+        print("No Family Tree Detected Or Critical Error Occured")
+        return
 
     if graph:
         generate_hierarchical_tree(ft, "out/graph/")
