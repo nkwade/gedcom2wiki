@@ -96,6 +96,13 @@ class Person:
                 if image is not None:
                     self.images.append(image)
             # TODO: add other file format saving
+        elif fact.tag == GedcomTag.NOTE:
+            if "Married," in fact.value:
+                pass
+            if fact.value.startswith("\n") and len(fact.value) > 1:
+                fact.value = fact.value[1:]
+            elif fact.value.startswith("<p>") and len(fact.value) > 3:
+                fact.value = fact.value[3:]
 
         # TODO: add any other facts I want to parse here
 

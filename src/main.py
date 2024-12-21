@@ -1,5 +1,4 @@
 import argparse
-import sys
 import time
 
 from gedcom.tree import FamilyTree

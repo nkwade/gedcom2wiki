@@ -13,7 +13,7 @@ def parse(gedcom_path: str) -> FamilyTree | None:
     with open(gedcom_path, "r", encoding="utf-8", errors="ignore") as file:
         text = file.read()
         lines = text.splitlines()
-        lines[0] = "0 HEAD"  # weird hardcode to get this to work 
+        lines[0] = "0 HEAD"  # weird hardcode to get this to work
         for line in lines:
             parts = line.strip().split()
             if not parts:
@@ -34,7 +34,11 @@ def parse(gedcom_path: str) -> FamilyTree | None:
                         value = parts[1]
                     else:
                         value = " ".join(parts[2:]) if len(parts) > 2 else ""
-                    facts.append(Fact(level, tag, value))
+
+                    if tag == GedcomTag.CONC:
+                        facts[-1].value += value
+                    else:
+                        facts.append(Fact(level, tag, value))
             else:
                 # Continuation of the previous fact value
                 if facts:
