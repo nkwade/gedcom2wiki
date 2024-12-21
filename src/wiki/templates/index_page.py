@@ -1,12 +1,32 @@
 from .base_html import html_page
-from ...gedcom.tree import FamilyTree
+from gedcom.tree import FamilyTree, Fact
+
 
 def render_index_page(family_tree: FamilyTree) -> str:
-    """Render the main index page with header information and lists of families and people."""
-    header_info = "<h2>Family Tree Information</h2><ul>"
-    for k, v in family_tree.header.items():
-        header_info += f"<li><strong>{k}</strong>: {v}</li>"
-    header_info += "</ul>"
+    """Render the main index page with header information and lists of families, people, and sources."""
+    header_info = "<h2>Family Tree Information</h2>"
+
+    # Handle the header as a single Fact or None
+    if family_tree.header:
+        header_info += (
+            f"<p>{family_tree.header.tag.value}: {family_tree.header.value}</p>"
+        )
+        if family_tree.header.sub_facts:
+            header_info += "<ul>"
+            for sfact in family_tree.header.sub_facts:
+                header_info += f"<li>{sfact.tag.value}: {sfact.value}</li>"
+            header_info += "</ul>"
+    else:
+        header_info += "<p>No header found.</p>"
+
+    # If desired, we could also show trailer info similarly
+    if family_tree.trailer:
+        header_info += f"<h3>Trailer Information</h3><p>{family_tree.trailer.tag.value}: {family_tree.trailer.value}</p>"
+        if family_tree.trailer.sub_facts:
+            header_info += "<ul>"
+            for sfact in family_tree.trailer.sub_facts:
+                header_info += f"<li>{sfact.tag.value}: {sfact.value}</li>"
+            header_info += "</ul>"
 
     family_list = "<h2>Families</h2><ul>"
     for fam_id, family in family_tree.families.items():
@@ -14,9 +34,14 @@ def render_index_page(family_tree: FamilyTree) -> str:
     family_list += "</ul>"
 
     person_list = "<h2>People</h2><ul>"
+    # Sort people by last word in their name if available
     sorted_persons = sorted(
         family_tree.persons.items(),
-        key=lambda item: item[1].name.split()[-1] if item[1].name and item[1].name.split() else item[0],
+        key=lambda item: (
+            item[1].name.split()[-1]
+            if item[1].name and item[1].name.split()
+            else item[0]
+        ),
     )
     for person_id, person in sorted_persons:
         name_display = person.name if person.name else person_id
@@ -30,7 +55,9 @@ def render_index_page(family_tree: FamilyTree) -> str:
     )
     for source_id, source in sorted_sources:
         title_display = source.title if source.title else source_id
-        source_list += f'<li><a href="sources/{source_id}.html">{title_display}</a></li>'
+        source_list += (
+            f'<li><a href="sources/{source_id}.html">{title_display}</a></li>'
+        )
     source_list += "</ul>"
 
     content = (

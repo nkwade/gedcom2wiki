@@ -1,7 +1,18 @@
-import enum
+from enum import Enum, EnumMeta
 
 
-class GedcomTag(enum.Enum):
+class CustomEnumMeta(EnumMeta):
+    def __getitem__(cls, name):
+        try:
+            return super().__getitem__(name)
+        except KeyError:
+            # print(f"Missing name: {name}")  # Handle the missing name case
+            return cls.OTHER  # Fallback value
+
+
+class GedcomTag(Enum, metaclass=CustomEnumMeta):
+    HEAD = "Header"
+    TRLR = "Trailer"
     BAPM = "Baptism"
     CHR = "Christening"
     BIRT = "Birth"
@@ -127,28 +138,28 @@ class GedcomTag(enum.Enum):
     _UID = "Unique ID"
     _UPD = "Update"
     _TYPE = "Source Type"
+    FAM = "Family"
+    INDI = "Individual"
 
     @classmethod
     def _missing_(cls, value):
-        print(f"Missing tag: {value}")
+        # print(f"Missing value: {value[0:100]}")  # only first 100 char
         return cls.OTHER
 
 
-class TagValue:
-    def __init__(self, level: int, tag: GedcomTag, value: str) -> None:
-        self.level: int = level
-        self.tag: GedcomTag = tag
-        self.value: str = value
-
-    def __repr__(self):
-        return f"TagValue(tag={self.tag}, value={self.value})"
-
-
 class Fact:
-    def __init__(self, tag: GedcomTag, value: str) -> None:
+    def __init__(self, level: int, tag: GedcomTag, value: str) -> None:
         self.tag: GedcomTag = tag
         self.value: str = value
-        self.sub_facts: dict[GedcomTag, Fact] = {}  # Details about this Gedcom Tag
+        self.level: int = level
+        self.sub_facts: list[Fact] = []  # Details about this Gedcom Tag
+
+    def __str__(self):
+        out = f"{self.tag.value}: {self.value}\n"
+        for fact in self.sub_facts:
+            out += f"\t{fact.tag.value}: {fact.value}\n"
+
+        return out
 
     def __repr__(self):
         return f"tag={self.tag}, value={self.value}, sub_facts={self.sub_facts}"

@@ -6,7 +6,7 @@ from .templates import (
     render_source_page,
 )
 
-from ..gedcom.tree import FamilyTree
+from gedcom.tree import FamilyTree
 
 
 def generate_wiki_pages(family_tree: FamilyTree, output_path: str) -> None:

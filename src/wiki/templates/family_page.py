@@ -1,12 +1,11 @@
-from ...gedcom.tree import FamilyTree
-from ...gedcom.family import Family
-from ...gedcom.person import Person
-from ...gedcom.fact import Fact
+from gedcom.tree import FamilyTree
+from gedcom.family import Family
+from gedcom.person import Person
+from gedcom.fact import Fact
 from .base_html import html_page
 
 
 def render_family_page(family_tree: FamilyTree, family: Family) -> str:
-    """Render a family page with a list of its members and basic details."""
     husb_link = ""
     wife_link = ""
     children_links = []
@@ -26,7 +25,6 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
             child_name = child.name if child.name else c
             children_links.append(f'<a href="../persons/{c}.html">{child_name}</a>')
 
-    # Table of members
     members_section = "<h2>Family Members</h2><table><tr><th>Role</th><th>Name</th><th>Birth</th><th>Death</th><th>Sex</th></tr>"
 
     def person_row(role, p: Person):
@@ -46,7 +44,6 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
 
     members_section += "</table>"
 
-    # Facts about the family if any
     facts_section = ""
     if family.facts:
 
@@ -54,7 +51,7 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
             html = f"<li>{fact.tag.value}: {fact.value}"
             if fact.sub_facts:
                 html += "<ul>"
-                for sub_fact in fact.sub_facts.values():
+                for sub_fact in fact.sub_facts:
                     html += render_fact(sub_fact)
                 html += "</ul>"
             html += "</li>"

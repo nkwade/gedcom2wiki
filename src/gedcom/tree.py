@@ -1,14 +1,35 @@
 from .person import Person
 from .family import Family
+from .fact import Fact, GedcomTag
+from .source import Source
 
 
 class FamilyTree:
-    def __init__(self) -> None:
-        self.persons: dict[str, Person] = {}
-        self.families: dict[str, Family] = {}
-        self.header: dict = {}
-        self.trailer: dict = {}
-        self.sources: dict = {}
+    def __init__(self, facts: list[Fact]) -> None:
+        self.persons: dict[str, Person] = {}  # key: xref_id, value: Person
+        self.families: dict[str, Family] = {}  # key: xref_id, value: Family
+        self.sources: dict[str, Source] = {}  # key: xref_id, value: Source
+        self.header: Fact | None = None
+        self.trailer: Fact | None = None
+        self.data: list[Fact] = []  # list of facts not related to above facts
+
+        self.parse_facts(facts)
+        self.link_families()
+
+    def parse_facts(self, facts: list[Fact]) -> None:
+        for fact in facts:
+            if fact.tag == GedcomTag.HEAD:
+                self.header = fact
+            elif fact.tag == GedcomTag.TRLR:
+                self.trailer = fact
+            elif fact.tag == GedcomTag.INDI:
+                self.persons[fact.value] = Person(fact)
+            elif fact.tag == GedcomTag.FAM:
+                self.families[fact.value] = Family(fact)
+            elif fact.tag == GedcomTag.SOUR:
+                self.sources[fact.value] = Source(fact)
+            else:
+                self.data.append(fact)
 
     def link_families(self) -> None:
         """After parsing all individuals and families, link them."""

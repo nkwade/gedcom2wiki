@@ -1,7 +1,7 @@
 import os
 import json
 from typing import Dict
-from ..gedcom.tree import FamilyTree, Person
+from gedcom.tree import FamilyTree, Person
 
 
 def build_hierarchy(family_tree: FamilyTree) -> Dict:

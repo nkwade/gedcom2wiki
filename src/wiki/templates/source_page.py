@@ -1,10 +1,9 @@
-from ...gedcom.tree import FamilyTree
-from ...gedcom.source import Source
+from gedcom.tree import FamilyTree
+from gedcom.source import Source
 from .base_html import html_page
 
 
 def render_source_page(family_tree: FamilyTree, source: Source) -> str:
-    """Render a source page with basic information."""
     title = source.title if source.title else source.xref_id
     origin = source.origin if source.origin else "Unknown"
     publisher = source.publisher if source.publisher else "Unknown"
