@@ -18,4 +18,4 @@ def render_source_page(family_tree: FamilyTree, source: Source) -> str:
     """
 
     content = f"<h1>{title}</h1>{basic_info}"
-    return html_page(title, content)
+    return html_page(title, content, depth=1)

@@ -8,7 +8,7 @@ class Family:
         self.wife: str | None = None  # Wife ID
         self.children: list[str] = []  # List of children ID
         self.facts: list[Fact] = fact.sub_facts  # Store facts like MARR, DIV, etc.
-        self.name: str | None = fact.value
+        self.name: str | None = None
 
         self.parse_facts()
 

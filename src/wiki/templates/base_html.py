@@ -1,5 +1,6 @@
-def html_page(title: str, body_content: str) -> str:
-    """A basic HTML wrapper."""
+def html_page(title: str, body_content: str, depth: int = 0) -> str:
+    """A basic HTML wrapper with correct relative path adjustments."""
+    home_href = "./" + ("../" * depth) + "index.html"
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,7 +40,7 @@ def html_page(title: str, body_content: str) -> str:
 <body>
     <header>
         <nav>
-            <a href="../index.html">Home</a>
+            <a href="{home_href}">Home</a>
         </nav>
     </header>
     {body_content}

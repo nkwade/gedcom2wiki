@@ -246,4 +246,4 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
     <div style="clear:both;"></div>
     """
 
-    return html_page(name, content)
+    return html_page(name, content, depth=1)

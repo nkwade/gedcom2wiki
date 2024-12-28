@@ -65,4 +65,4 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
         facts_section += "</ul>"
 
     content = f"<h1>Family Of {family.name}</h1>{members_section}{facts_section}"
-    return html_page(f"Family {family.name}", content)
+    return html_page(f"Family {family.name}", content, depth=1)

@@ -39,11 +39,11 @@ class FamilyTree:
             if family.wife in self.persons:
                 self.persons[family.wife].fams.append(fam_id)
 
-            if family.husb and family.wife:
+            if family.husb and self.persons[family.husb].name and family.wife and self.persons[family.wife].name:
                 family.name = f"{self.persons[family.husb].name} and {self.persons[family.wife].name}"
-            elif family.husb and not family.wife:
+            elif family.husb and self.persons[family.husb].name:
                 family.name = self.persons[family.husb].name
-            elif family.wife and not family.husb:
+            elif family.wife and self.persons[family.wife].name:
                 family.name = self.persons[family.wife].name
             else:
                 family.name = "Unknown"
