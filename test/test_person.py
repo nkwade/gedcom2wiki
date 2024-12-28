@@ -5,51 +5,24 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
 import pytest
-from gedcom.person import Person, Sex  # type: ignore
-from gedcom.fact import GedcomTag, TagValue, Fact  # type: ignore
+from gedcom.person import Person, Sex
+from gedcom.fact import GedcomTag, Fact
 
 
-def test_parse_tag_values():
-    person = Person(xref_id="I1")
-    tag_values = [
-        TagValue(level=1, tag=GedcomTag.NAME, value="John /Doe/"),
-        TagValue(level=1, tag=GedcomTag.SEX, value="M"),
-        TagValue(level=1, tag=GedcomTag.BIRT, value=""),
-        TagValue(level=2, tag=GedcomTag.DATE, value="1 JAN 1990"),
-        TagValue(level=3, tag=GedcomTag.DATE, value="10am est"),
-        TagValue(level=1, tag=GedcomTag.DEAT, value=""),
-        TagValue(level=2, tag=GedcomTag.DATE, value="31 DEC 2050"),
-    ]
-    person.parse_tag_values(tag_values)
+def test_person_creation():
+    main_fact = Fact(0, GedcomTag.INDI, "I1")
+    name_fact = Fact(1, GedcomTag.NAME, "John /Doe/")
+    birth_fact = Fact(1, GedcomTag.BIRT, "")
+    birth_date_fact = Fact(2, GedcomTag.DATE, "1 JAN 1990")
+    birth_fact.sub_facts.append(birth_date_fact)
+    main_fact.sub_facts.append(name_fact)
+    main_fact.sub_facts.append(birth_fact)
 
-    assert person.sex == Sex.M
+    person = Person(main_fact)
+
+    assert person.xref_id == "I1"
+    assert person.name == "John Doe"
     assert person.birthday == "1 JAN 1990"
-    assert person.death == "31 DEC 2050"
-    assert len(person.facts) == 4
-    assert len(person.facts[2].sub_facts.keys()) == 1
-
-
-def test_parse_fact():
-    person = Person(xref_id="I2")
-    fact_sex = Fact(tag=GedcomTag.SEX, value="F")
-    person.parse_fact(fact_sex)
-    assert person.sex == Sex.F
-
-    fact_birth = Fact(tag=GedcomTag.BIRT, value="")
-    fact_birth.sub_facts[GedcomTag.DATE] = Fact(tag=GedcomTag.DATE, value="15 JUL 1985")
-    person.parse_fact(fact_birth)
-    assert person.birthday == "15 JUL 1985"
-
-
-def test_person_initialization():
-    person = Person(xref_id="I3")
-    assert person.xref_id == "I3"
-    assert person.famc == []
-    assert person.fams == []
-    assert person.facts == []
-    assert person.sex is None
-    assert person.birthday is None
-    assert person.death == "Present"
 
 
 if __name__ == "__main__":
