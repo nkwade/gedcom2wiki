@@ -1,7 +1,7 @@
-from .person import Person
-from .family import Family
-from .fact import Fact, GedcomTag
-from .source import Source
+from gedcom.person import Person
+from gedcom.family import Family
+from gedcom.fact import Fact, GedcomTag
+from gedcom.source import Source
 
 
 class FamilyTree:
@@ -39,7 +39,12 @@ class FamilyTree:
             if family.wife in self.persons:
                 self.persons[family.wife].fams.append(fam_id)
 
-            if family.husb and self.persons[family.husb].name and family.wife and self.persons[family.wife].name:
+            if (
+                family.husb
+                and self.persons[family.husb].name
+                and family.wife
+                and self.persons[family.wife].name
+            ):
                 family.name = f"{self.persons[family.husb].name} and {self.persons[family.wife].name}"
             elif family.husb and self.persons[family.husb].name:
                 family.name = self.persons[family.husb].name

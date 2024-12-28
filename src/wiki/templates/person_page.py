@@ -174,11 +174,11 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
         if date_fact:
             fact_year = extract_year_from_string(date_fact.value)
             if fact_year is not None and birth_year is not None:
-                if fact_year <= early_end:  # type: ignore
+                if early_end and fact_year <= early_end:
                     early_life_facts.append(fact)
-                elif fact_year <= mid_end:  # type: ignore
+                elif mid_end and fact_year <= mid_end:
                     mid_life_facts.append(fact)
-                elif fact_year <= late_end:  # type: ignore
+                elif late_end and fact_year <= late_end:
                     late_life_facts.append(fact)
                 else:
                     other_facts.append(fact)

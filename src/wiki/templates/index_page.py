@@ -1,5 +1,5 @@
-from .base_html import html_page
-from gedcom.tree import FamilyTree, Fact
+from wiki.templates.base_html import html_page
+from gedcom.tree import FamilyTree
 
 
 def render_index_page(family_tree: FamilyTree) -> str:

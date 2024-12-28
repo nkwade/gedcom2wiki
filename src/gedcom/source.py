@@ -1,4 +1,4 @@
-from .fact import Fact, GedcomTag
+from gedcom.fact import Fact, GedcomTag
 
 
 class Source:

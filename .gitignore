@@ -7,6 +7,7 @@ out/
 __pycache__/
 *.py[cod]
 *$py.class
+mypy.ini
 
 # C extensions
 *.so

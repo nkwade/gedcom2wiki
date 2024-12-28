@@ -1,15 +1,14 @@
 import os
 import json
-from typing import Dict
 from gedcom.tree import FamilyTree, Person
 
 
-def build_hierarchy(family_tree: FamilyTree) -> Dict:
+def build_hierarchy(family_tree: FamilyTree) -> dict:
     root_persons = [p for p in family_tree.persons.values() if len(p.famc) == 0]
     if not root_persons:
         root_persons = list(family_tree.persons.values())
 
-    def person_to_node(p: Person) -> Dict:
+    def person_to_node(p: Person) -> dict:
         children_nodes = []
         for fam_id in p.fams:
             if fam_id in family_tree.families:

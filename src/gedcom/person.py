@@ -1,9 +1,10 @@
-from .fact import GedcomTag, Fact
-from .sex import Sex
 from datetime import datetime
 from PIL import Image
 import requests
 from io import BytesIO
+
+from gedcom.fact import GedcomTag, Fact
+from gedcom.sex import Sex
 
 
 class Person:
@@ -23,44 +24,6 @@ class Person:
         )  # all images for the person #TODO: attribute images to their respective fact
 
         self.parse_facts(fact)
-
-    """
-    def parse_tag_values(self, tvs: list[TagValue]) -> None:
-        i = 0
-        queue: list[tuple[int, Fact]] = []  # level, Fact
-
-        while i < len(tvs):
-            tv = tvs[i]
-            while len(queue) > 0 and tv.level <= queue[-1][0]:
-                level, done = queue.pop(-1)
-                if (
-                    level == 1
-                ):  # all subfacts stored in fact so we only want to keep track of level 1 facts for people
-                    self.parse_fact(done)
-
-            fact = Fact(tv.tag, tv.value)
-
-            if (
-                fact.tag == GedcomTag.FORM
-                and len(tvs) > i + 1
-                and tvs[i + 1].tag == GedcomTag.FILE
-            ):
-                image: Image.Image | None = self.save_image(tvs[i + 1].value)
-                if image is not None:
-                    self.images.append(image)
-
-            if len(queue) > 0:
-                queue[-1][1].sub_facts[fact.tag] = fact
-
-            queue.append((tv.level, fact))
-            i += 1
-
-        # Finish the last fact left in the queue
-        while len(queue) != 0:
-            level, done = queue.pop(-1)
-            if level == 1:
-                self.parse_fact(done)
-    """
 
     def parse_facts(self, fact: Fact) -> None:
         # Parse all level 1 facts

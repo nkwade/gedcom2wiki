@@ -2,7 +2,7 @@ from gedcom.tree import FamilyTree
 from gedcom.family import Family
 from gedcom.person import Person
 from gedcom.fact import Fact, GedcomTag
-from .base_html import html_page
+from wiki.templates.base_html import html_page
 
 
 def render_family_page(family_tree: FamilyTree, family: Family) -> str:
@@ -59,7 +59,13 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
 
         facts_section = "<h2>Family Facts</h2><ul>"
         for fact in family.facts:
-            if fact.tag.name.startswith("_") or fact.tag == GedcomTag.OBJE or fact.tag == GedcomTag.RIN or fact.tag == GedcomTag.FAMC or fact.tag == GedcomTag.FAMS:
+            if (
+                fact.tag.name.startswith("_")
+                or fact.tag == GedcomTag.OBJE
+                or fact.tag == GedcomTag.RIN
+                or fact.tag == GedcomTag.FAMC
+                or fact.tag == GedcomTag.FAMS
+            ):
                 continue
             facts_section += render_fact(fact)
         facts_section += "</ul>"

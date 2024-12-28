@@ -1,4 +1,4 @@
-from .fact import Fact, GedcomTag
+from gedcom.fact import Fact, GedcomTag
 
 
 class Family:
@@ -12,36 +12,7 @@ class Family:
 
         self.parse_facts()
 
-    """
-    def parse_data(self, data: list[TagValue]):
-        i = 0
-        queue: list[tuple[int, Fact]] = []  # level, Fact
-
-        while i < len(data):
-            tv = data[i]
-            while len(queue) > 0 and tv.level <= queue[-1][0]:
-                level, done = queue.pop(-1)
-                if (
-                    level == 1
-                ):  # all subfacts stored in fact so we only want to keep track of level 1 facts for people
-                    self.facts.append(done)
-
-            fact = Fact(tv.tag, tv.value)
-
-            if len(queue) > 0:
-                queue[-1][1].sub_facts[fact.tag] = fact
-
-            queue.append((tv.level, fact))
-            i += 1
-
-        # Finish the last fact left in the queue
-        while len(queue) != 0:
-            level, done = queue.pop(-1)
-            if level == 1:
-                self.facts.append(done)
-    """
-
-    def parse_facts(self):
+    def parse_facts(self) -> None:
         to_remove: list[Fact] = []
 
         for sub in self.facts:
