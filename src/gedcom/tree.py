@@ -34,9 +34,9 @@ class FamilyTree:
     def link_families(self) -> None:
         """After parsing all individuals and families, link them."""
         for fam_id, family in self.families.items():
-            if family.husb in self.persons:
+            if family.husb and self.persons.get(family.husb, None):
                 self.persons[family.husb].fams.append(fam_id)
-            if family.wife in self.persons:
+            if family.wife and self.persons.get(family.wife, None):
                 self.persons[family.wife].fams.append(fam_id)
 
             if (

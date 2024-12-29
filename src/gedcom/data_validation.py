@@ -1,7 +1,6 @@
 from datetime import datetime
 from collections import defaultdict
 from gedcom.tree import FamilyTree
-from gedcom.fact import GedcomTag
 
 
 def validate_family_tree(family_tree: FamilyTree) -> dict:

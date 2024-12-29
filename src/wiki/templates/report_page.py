@@ -26,4 +26,4 @@ def render_report_page(data_validation_html: str, family_tree: FamilyTree) -> st
     <h1>Data Validation Report</h1>
     {data_validation_html}
     """
-    return html_page("Data Validation Report", content, depth=1)
+    return html_page("Data Validation Report", content, depth=0)
