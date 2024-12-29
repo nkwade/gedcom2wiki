@@ -60,11 +60,14 @@ def render_index_page(family_tree: FamilyTree) -> str:
         )
     source_list += "</ul>"
 
+    validation_report_link = "<h2>Data Validation Report</h2><p><a href='validation.html'>View Validation Report</a></p>"
+
     content = (
         f"<h1>Family Tree Index</h1>"
         f"{header_info}"
         f"{family_list}"
         f"{person_list}"
         f"{source_list}"
+        f"{validation_report_link}"
     )
     return html_page("Family Tree Wiki", content)

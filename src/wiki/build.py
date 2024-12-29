@@ -3,7 +3,9 @@ from wiki.templates.index_page import render_index_page
 from wiki.templates.family_page import render_family_page
 from wiki.templates.person_page import render_person_page
 from wiki.templates.source_page import render_source_page
+from wiki.templates.report_page import render_report_page
 from gedcom.tree import FamilyTree
+from gedcom.data_validation import generate_validation_html
 
 
 def generate_wiki_pages(family_tree: FamilyTree, output_path: str) -> None:
@@ -13,6 +15,7 @@ def generate_wiki_pages(family_tree: FamilyTree, output_path: str) -> None:
     :param family_tree: A FamilyTree object as parsed from the GEDCOM file.
     :param output_path: The directory where the HTML pages will be generated.
     """
+
     # Ensure output directory exists
     os.makedirs(output_path, exist_ok=True)
     families_dir = os.path.join(output_path, "families")
@@ -50,3 +53,9 @@ def generate_wiki_pages(family_tree: FamilyTree, output_path: str) -> None:
             os.path.join(sources_dir, f"{source_id}.html"), "w", encoding="utf-8"
         ) as f:
             f.write(source_html)
+
+    # Generate data validation page
+    validation_html = generate_validation_html(family_tree)
+    report_html = render_report_page(validation_html, family_tree)
+    with open(os.path.join(output_path, "validation.html"), "w", encoding="utf-8") as f:
+        f.write(report_html)

@@ -17,7 +17,7 @@ class Person:
         # Common facts that nearly everyone has:
         self.name: str | None = None
         self.sex: Sex | None = None
-        self.birthday: datetime | str | None = None
+        self.birthday: str | None = None
         self.death: datetime | str = "Alive"
         self.images: list[Image.Image] = (
             []
