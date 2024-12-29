@@ -23,9 +23,6 @@ class Person:
             []
         )  # all images for the person #TODO: attribute images to their respective fact
 
-        self.parse_facts(fact)
-
-    def parse_facts(self, fact: Fact) -> None:
         # Parse all level 1 facts
         for f in fact.sub_facts:
             self.parse_fact(f)
@@ -55,6 +52,7 @@ class Person:
                     file = sub.value
 
             if form is not None and file is not None and form in ["jpg", "png"]:
+                # pass
                 image: Image.Image | None = self.save_image(file)
                 if image is not None:
                     self.images.append(image)
@@ -78,7 +76,7 @@ class Person:
             # image.show()
             return image
         except Exception as e:  # no access to images
-            # print(e.__str__())
+            print("Access to image forbidden")
             return None
 
     def __repr__(self) -> str:

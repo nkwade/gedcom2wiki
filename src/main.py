@@ -36,13 +36,16 @@ def main(
 
     start = last = time.time()
 
+    if not os.path.exists(output_path):
+        os.makedirs(output_path)
+
     # Parse GEDCOM file
     ft: FamilyTree | None
     if not use_cache or force:
         ft = parse(ged_path)
         print(f"Time to parse Gedcom: {time.time() - last}")
         last = time.time()
-    if use_cache or not ft:
+    if use_cache and not ft:
         ft = load_from_cache(output_path)
         print(f"Time to load from cache: {time.time() - last}")
         last = time.time()
