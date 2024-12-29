@@ -7,10 +7,10 @@ from wiki.templates.base_html import html_page
 
 def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
     """Generate an SVG chart showing family structure with:
-       - dynamic box widths based on name length
-       - a line connecting the parents on their inside edges
-       - a vertical line from parent midpoint down
-       - horizontally spaced child boxes so they don't overlap.
+    - dynamic box widths based on name length
+    - a line connecting the parents on their inside edges
+    - a vertical line from parent midpoint down
+    - horizontally spaced child boxes so they don't overlap.
     """
 
     # -----------------------------------------------------------------------
@@ -34,15 +34,15 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
     svg_width = 1000
     svg_height = 600
     box_height = 40
-    vertical_gap = 50           # gap between parent box line and child branch line
+    vertical_gap = 50  # gap between parent box line and child branch line
     spacing_between_children = 40  # horizontal gap between child boxes
-    PARENT_GAP = 100           # extra horizontal gap between father and mother if both present
+    PARENT_GAP = 100  # extra horizontal gap between father and mother if both present
 
     # Estimation function for text width:
     # We'll do length_of_text * CHAR_WIDTH + PADDING
     # Then ensure at least MIN_WIDTH
-    CHAR_WIDTH = 7   # approximate width of each character
-    PADDING = 20     # left/right padding inside the box
+    CHAR_WIDTH = 7  # approximate width of each character
+    PADDING = 20  # left/right padding inside the box
     MIN_WIDTH = 120  # minimum box width
 
     def measure_text_width(text: str) -> int:
@@ -94,9 +94,17 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
     # 6. Draw Parent Boxes
     # -----------------------------------------------------------------------
     if father_x is not None and father_name:
-        svg_elements.append(create_person_box(father_x, parent_y, father_box_width, box_height, father_name))
+        svg_elements.append(
+            create_person_box(
+                father_x, parent_y, father_box_width, box_height, father_name
+            )
+        )
     if mother_x is not None and mother_name:
-        svg_elements.append(create_person_box(mother_x, parent_y, mother_box_width, box_height, mother_name))
+        svg_elements.append(
+            create_person_box(
+                mother_x, parent_y, mother_box_width, box_height, mother_name
+            )
+        )
 
     # -----------------------------------------------------------------------
     # 7. Connect Parents (Inside Edges) or Single Parent
@@ -104,7 +112,9 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
     parents_mid_x = None
     parents_mid_y = parent_y + box_height / 2
 
-    both_parents = (father_x is not None and father_name) and (mother_x is not None and mother_name)
+    both_parents = (father_x is not None and father_name) and (
+        mother_x is not None and mother_name
+    )
     if both_parents:
         # Father right edge
         father_right_x = father_x + father_box_width
@@ -152,7 +162,9 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
         n_children = len(children_names)
 
         # B. Compute total width of all child boxes + spacing
-        total_children_width = sum(child_widths) + spacing_between_children * (n_children - 1)
+        total_children_width = sum(child_widths) + spacing_between_children * (
+            n_children - 1
+        )
 
         # C. Center that row under parents_mid_x
         children_row_left = parents_mid_x - (total_children_width / 2)
@@ -190,7 +202,11 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
             )
 
             # box + text
-            svg_elements.append(create_person_box(cx_left, child_box_y, w, box_height, name))
+            svg_elements.append(
+                create_person_box(
+                    cx_left, child_box_y, w, box_height, name if name else "Unknown"
+                )
+            )
 
     # -----------------------------------------------------------------------
     # 10. Combine everything into the final SVG
@@ -202,9 +218,6 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
 </svg>
 """
     return svg
-
-
-
 
 
 def render_family_page(family_tree: FamilyTree, family: Family) -> str:
