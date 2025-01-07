@@ -87,24 +87,29 @@ def validate_family_tree(family_tree: FamilyTree) -> dict:
     for person_id, person in family_tree.persons.items():
         try:
             birth_year = int(str(person.birthday).split()[-1])
-            death_year = (
-                int(str(person.death).split()[-1])
-                if person.death != "Alive"
-                else current_year
-            )
+            if person.death == "Alive":
+                death_year = current_year
+            elif person.death == "Dead":
+                death_year = None  # Handle 'Dead' without a year
+            else:
+                death_year = int(str(person.death).split()[-1])
 
-            if death_year - birth_year > 120:
-                issues["Unusual Lifespans"].append(
-                    f"Person {person_id} lived an implausible {death_year - birth_year} years."
-                )
-            if birth_year > current_year:
-                issues["Invalid Dates"].append(
-                    f"Person {person_id} has a birth year in the future ({birth_year})."
-                )
-            if death_year > current_year:
-                issues["Invalid Dates"].append(
-                    f"Person {person_id} has a death year in the future ({death_year})."
-                )
+            if death_year is not None:
+                if death_year - birth_year > 120:
+                    issues["Unusual Lifespans"].append(
+                        f"Person {person_id} lived an implausible {death_year - birth_year} years."
+                    )
+                if birth_year > current_year:
+                    issues["Invalid Dates"].append(
+                        f"Person {person_id} has a birth year in the future ({birth_year})."
+                    )
+                if death_year > current_year:
+                    issues["Invalid Dates"].append(
+                        f"Person {person_id} has a death year in the future ({death_year})."
+                    )
+            else:
+                # Optionally handle 'Dead' without a death year
+                pass
         except (ValueError, TypeError):
             pass
 
@@ -140,9 +145,8 @@ def validate_family_tree(family_tree: FamilyTree) -> dict:
             missing.append("Name")
         if not person.birthday:
             missing.append("Birth")
-        if person.death == "Alive" and not person.death:
-            missing.append("Death")
-        elif person.death != "Alive" and not person.death:
+
+        if person.death == "Dead":
             missing.append("Death")
         if missing:
             missing_common_facts.append(

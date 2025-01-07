@@ -36,9 +36,12 @@ class Person:
                     # TODO: write gedcom date to datetime function
                     self.birthday = sub.value
         elif fact.tag == GedcomTag.DEAT:
-            for sub in fact.sub_facts:
-                if GedcomTag.DATE == sub.tag:
-                    self.death = sub.value
+            if fact.value == "Y":
+                self.death = "Dead"
+            else:
+                for sub in fact.sub_facts:
+                    if GedcomTag.DATE == sub.tag:
+                        self.death = sub.value
         elif fact.tag == GedcomTag.NAME:
             fact.value = "".join([c for c in fact.value if c != "/"])
             if fact.value != "":
