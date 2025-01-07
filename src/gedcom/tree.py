@@ -3,6 +3,8 @@ from gedcom.family import Family
 from gedcom.fact import Fact, GedcomTag
 from gedcom.source import Source
 
+import time
+
 
 class FamilyTree:
     def __init__(self, facts: list[Fact]) -> None:
@@ -14,22 +16,36 @@ class FamilyTree:
         self.data: list[Fact] = []  # list of facts not related to above facts
 
         self.parse_facts(facts)
+        start = time.time()
         self.link_families()
+        print(f"Total link family time: {time.time() - start}")
 
     def parse_facts(self, facts: list[Fact]) -> None:
+        person_time = family_time = source_time = 0.0
+
         for fact in facts:
             if fact.tag == GedcomTag.HEAD:
                 self.header = fact
             elif fact.tag == GedcomTag.TRLR:
                 self.trailer = fact
             elif fact.tag == GedcomTag.INDI:
+                start = time.time()
                 self.persons[fact.value] = Person(fact)
+                person_time += time.time() - start
             elif fact.tag == GedcomTag.FAM:
+                start = time.time()
                 self.families[fact.value] = Family(fact)
+                family_time += time.time() - start
             elif fact.tag == GedcomTag.SOUR:
+                start = time.time()
                 self.sources[fact.value] = Source(fact)
+                source_time += time.time() - start
             else:
                 self.data.append(fact)
+
+        print(f"Total person time: {person_time}")
+        print(f"Total family time: {family_time}")
+        print(f"Total source time: {source_time}")
 
     def link_families(self) -> None:
         """After parsing all individuals and families, link them."""
