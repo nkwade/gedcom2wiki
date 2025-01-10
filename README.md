@@ -53,7 +53,7 @@ python src/main.py --ged_path royal92.ged --output_path output/ --verbose
 
 ## View Wiki
 
-After running the program you will see a line giving you the direct link that should open the index.html file in your browser. If not you can either copy that file:///<path_to_index.html> and paste that in your web browser.
+After running the program you will see a line giving you the direct link that should open the index.html file in your browser. If not you can either copy that file:///<path_to_index.html> and paste that in your web browser or find the `index.html` file in your specified output folder (default: `out/`).
 Example line: `Open the wiki at: file:///D:/dev/gedcom2wiki/out/index.html`
 
 ## Support
