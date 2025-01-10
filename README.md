@@ -6,6 +6,10 @@ I built this because 1) sharing family trees from standard websites like Ancestr
 
 Hope this helps your family tree!
 
+## Requirements
+- Python 3+ (personally used 3.10): https://www.python.org/downloads/
+- Git: https://git-scm.com/downloads
+
 ## Installation
 
 1. Clone the repository:
