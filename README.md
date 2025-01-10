@@ -1,7 +1,7 @@
 # gedcom2wiki
-Convert GEDCOM to a Wiki style family tree along with some data validation on the tree.
+Convert GEDCOM to a Wiki style family tree along with some data validation on the tree. This program will go through a GEDCOM file and generate a Wikipedia-style page for the whole family tree, a page for each family, a page for each person, and a data validation report. 
 
-Most examples I've seen online either require you to post information to a public website or are old outdated program, so I decided to make my own.
+Most examples I've seen online either require you to post information to a public website or are old outdated programs, so I decided to make my own.
 I built this because 1) sharing family trees from standard websites like Ancestry.com or MyHeritage.com sucks and 2) they are great to edit and research family trees, but suck for just viewing people/families. Being able to easily just search a person or family and then reading all their facts and click through to other people is much more intuative for those that haven't used the standard websites.
 
 Hope this helps your family tree!
@@ -50,6 +50,11 @@ Not Working: `--graph`: Generate a graph of the family tree
 ```bash
 python src/main.py --ged_path royal92.ged --output_path output/ --verbose
 ```
+
+## View Wiki
+
+After running the program you will see a line giving you the direct link that should open the index.html file in your browser. If not you can either copy that file:///<path_to_index.html> and paste that in your web browser.
+Example line: `Open the wiki at: file:///D:/dev/gedcom2wiki/out/index.html`
 
 ## Support
 
