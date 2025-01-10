@@ -1,5 +1,4 @@
 # All GEDCOM files 
-*.ged
 wade.txt
 out/
 .VSCodeCounter/
@@ -7,7 +6,6 @@ out/
 __pycache__/
 *.py[cod]
 *$py.class
-mypy.ini
 
 # C extensions
 *.so

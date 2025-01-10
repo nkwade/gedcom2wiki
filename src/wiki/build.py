@@ -8,7 +8,9 @@ from gedcom.tree import FamilyTree
 from gedcom.data_validation import generate_validation_html
 
 
-def generate_wiki_pages(family_tree: FamilyTree, output_path: str) -> None:
+def generate_wiki_pages(
+    family_tree: FamilyTree, output_path: str, validate: bool = True
+) -> None:
     """
     Generate static HTML pages from the FamilyTree data structure.
 
@@ -55,7 +57,10 @@ def generate_wiki_pages(family_tree: FamilyTree, output_path: str) -> None:
             f.write(source_html)
 
     # Generate data validation page
-    validation_html = generate_validation_html(family_tree)
-    report_html = render_report_page(validation_html, family_tree)
-    with open(os.path.join(output_path, "validation.html"), "w", encoding="utf-8") as f:
-        f.write(report_html)
+    if validate:
+        validation_html = generate_validation_html(family_tree)
+        report_html = render_report_page(validation_html, family_tree)
+        with open(
+            os.path.join(output_path, "validation.html"), "w", encoding="utf-8"
+        ) as f:
+            f.write(report_html)

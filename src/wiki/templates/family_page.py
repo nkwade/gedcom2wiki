@@ -62,8 +62,8 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
     #    - If only mother, center mother
     # -----------------------------------------------------------------------
     parent_y = 50
-    father_x = None
-    mother_x = None
+    father_x: float | None = None
+    mother_x: float | None = None
 
     if father_name and mother_name:
         # Both parents exist
@@ -72,10 +72,10 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
         mother_x = father_right_x + PARENT_GAP
     elif father_name and not mother_name:
         # Only father
-        father_x = (svg_width - father_box_width) / 2
+        father_x = (svg_width - father_box_width) / 2.0
     elif mother_name and not father_name:
         # Only mother
-        mother_x = (svg_width - mother_box_width) / 2
+        mother_x = (svg_width - mother_box_width) / 2.0
 
     # -----------------------------------------------------------------------
     # 5. Create <rect> + <text> Helper
@@ -117,7 +117,7 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
     )
     if both_parents:
         # Father right edge
-        father_right_x = father_x + father_box_width
+        father_right_x = father_x + father_box_width  # type: ignore
         father_mid_y = parents_mid_y
         # Mother left edge
         mother_left_x = mother_x
@@ -129,7 +129,7 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
         )
 
         # Midpoint of that line:
-        parents_mid_x = (father_right_x + mother_left_x) / 2
+        parents_mid_x = (father_right_x + mother_left_x) / 2  # type: ignore
 
     else:
         # If only father
@@ -158,7 +158,9 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
     # -----------------------------------------------------------------------
     if top_branch_y is not None and children_names:
         # A. Compute each child's box width
-        child_widths = [measure_text_width(name) for name in children_names]
+        child_widths = [
+            measure_text_width(name) for name in children_names if name is not None
+        ]
         n_children = len(children_names)
 
         # B. Compute total width of all child boxes + spacing
@@ -167,7 +169,7 @@ def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
         )
 
         # C. Center that row under parents_mid_x
-        children_row_left = parents_mid_x - (total_children_width / 2)
+        children_row_left = parents_mid_x - (total_children_width / 2)  # type: ignore
         child_box_y = top_branch_y + vertical_gap
 
         # D. Draw a horizontal "child branch" line from the leftmost child center to the rightmost child center

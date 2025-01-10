@@ -27,24 +27,25 @@ Most examples I've seen online either require you to post information to a publi
 To convert a GEDCOM file to a Wiki style family tree, run the following command:
 
 ```bash
-python main.py --ged_path <path_to_gedcom_file> --output_path <output_directory> [options]
+python src/main.py --ged_path <path_to_gedcom_file> --output_path <output_directory> [options]
 ```
 
 ### Options
 
-- `--ged_path`: Path to the GEDCOM file
+- `--ged_path`: Path to the GEDCOM file (default: `royal92.ged`)
 - `--output_path`: Path to the output directory (default: `out/`)
-- `--graph`: Generate a graph of the family tree (currently not working)
-- `--verbose`: Print verbose output
-- `--use_cache`: Use cache if available
-- `--write_cache`: Write cache after processing (if one does not exists, use --force to overwrite cache)
-- `--validate`: Validate the GEDCOM data and create a data validation report (at bottom of index file)
-- `--force`: Forces overwriting current cache (if it exists)
+- `--verbose`: Writes verbose output to `out/verbose.txt` (default: False)
+- `--use_cache`: Use cache if available (default: False)
+- `--write_cache`: Write cache after processing if one does not exists, use `--force` to overwrite cache (default: True)
+- `--validate`: Validate the GEDCOM data and create a data validation report at bottom of index file (default: True)
+- `--force`: Forces overwriting current cache if cache already exists (default: False)
 
-### Example
+Not Working: `--graph`: Generate a graph of the family tree
+
+### Example Using The Royal Family Tree
 
 ```bash
-python main.py --ged_path my_family.ged --output_path output/ --graph --verbose
+python src/main.py --ged_path royal92.ged --output_path output/ --verbose
 ```
 
 ## Support

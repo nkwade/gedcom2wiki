@@ -24,11 +24,11 @@ def load_from_cache(output_folder: str) -> FamilyTree | None:
 
 
 def main(
-    ged_path: str = "C:\\Users\\beake\\Documents\\dev\\gedcom2wiki\\wade.ged",
+    ged_path: str = "royal92.ged",
     output_path: str = "out/",
     graph: bool = False,
     verbose: bool = False,
-    use_cache: bool = True,
+    use_cache: bool = False,
     write_cache: bool = True,
     validate: bool = True,
     force: bool = False,
@@ -40,16 +40,15 @@ def main(
         os.makedirs(output_path)
 
     # Parse GEDCOM file
-    ft: FamilyTree | None
+    ft: FamilyTree | None = None
     if not use_cache or force:
         ft = parse(ged_path)
-        print(f"Time to parse Gedcom: {time.time() - last}")
+        print(f"Time to parse Gedcom: {time.time() - last:.2f}")
         last = time.time()
     if use_cache and not ft:
         ft = load_from_cache(output_path)
-        print(f"Time to load from cache: {time.time() - last}")
+        print(f"Time to load from cache: {time.time() - last:.2f}")
         last = time.time()
-
 
     if not ft:
         print("No Family Tree Detected Or Critical Error Occured")
@@ -57,24 +56,24 @@ def main(
 
     if graph:
         generate_hierarchical_tree(ft, "out/graph/")
-        print(f"Time to generate graph tree: {time.time() - last}")
+        print(f"Time to generate graph tree: {time.time() - last:.2f}")
         last = time.time()
 
     if verbose:
         with open("out/verbose.txt", "w", encoding="utf-8", errors="ignore") as f:
             for person_id, person in ft.persons.items():
                 f.write(person.__repr__() + "\n")
-        print(f"Time to write log file: {time.time() - last}")
+        print(f"Time to write log file: {time.time() - last:.2f}")
         last = time.time()
 
     if write_cache:
         write_to_cache(ft, output_path)
-        print(f"Time to write to cache: {time.time() - last}")
+        print(f"Time to write to cache: {time.time() - last:.2f}")
         last = time.time()
 
     # Generate wiki pages for family tree
-    generate_wiki_pages(ft, output_path)
-    print(f"Time to generate wiki pages: {time.time() - last}")
+    generate_wiki_pages(ft, output_path, validate)
+    print(f"Time to generate wiki pages: {time.time() - last:.2f}")
     last = time.time()
 
     print(f"Total Time: {time.time() - start:.2f} Seconds")
@@ -114,9 +113,7 @@ if __name__ == "__main__":
         help="Validate the GEDCOM data",
     )
     parser.add_argument(
-        "--force",
-        action="store_true",
-        help="Forces parsing of Gedcom file"
+        "--force", action="store_true", help="Forces parsing of Gedcom file"
     )
 
     args = parser.parse_args()
@@ -137,6 +134,5 @@ if __name__ == "__main__":
         main_kwargs["validate"] = args.validate
     if args.force:
         main_kwargs["force"] = args.force
-    
 
     main(**main_kwargs)
