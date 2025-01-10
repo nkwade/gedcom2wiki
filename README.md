@@ -60,6 +60,12 @@ python src/main.py --ged_path royal92.ged --output_path output/ --verbose
 After running the program you will see a line giving you the direct link that should open the index.html file in your browser. If not you can either copy that file:///<path_to_index.html> and paste that in your web browser or find the `index.html` file in your specified output folder (default: `out/`).
 Example line: `Open the wiki at: file:///D:/dev/gedcom2wiki/out/index.html`
 
+## Example Images Of Wiki
+![image](https://github.com/user-attachments/assets/4a97a542-7cce-4058-9c3f-31898fdd28b9)
+![image](https://github.com/user-attachments/assets/aad4f067-b171-4cd6-a246-e2b0008fa9c9)
+![image](https://github.com/user-attachments/assets/b312c5d9-51cf-4ada-8254-cc8b90846a9b)
+
+
 ## Support
 
 I (nkwade) should be paying attention to any Github pull requests, but reach out to gedcom@wade.dev to get in contact with me personally. 
