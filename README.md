@@ -1,7 +1,10 @@
 # gedcom2wiki
 Convert GEDCOM to a Wiki style family tree along with some data validation on the tree.
 
-Most examples I've seen online either require you to post information to a public website or are old outdates programs. 
+Most examples I've seen online either require you to post information to a public website or are old outdated program, so I decided to make my own.
+I built this because 1) sharing family trees from standard websites like Ancestry.com or MyHeritage.com sucks and 2) they are great to edit and research family trees, but suck for just viewing people/families. Being able to easily just search a person or family and then reading all their facts and click through to other people is much more intuative for those that haven't used the standard websites.
+
+Hope this helps your family tree!
 
 ## Installation
 
