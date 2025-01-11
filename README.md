@@ -6,6 +6,9 @@ I built this because 1) sharing family trees from standard websites like Ancestr
 
 Hope this helps your family tree! PLEASE REACH OUT IF YOU ARE INTERESTED IN DEVELOPING A BETTER FRONTEND FOR THIS!!!
 
+## Link to example Royal Family Tree Wiki
+https://wade.dev/royaltreewiki/index.html
+
 ## Requirements
 - Python 3+ (personally used 3.10): https://www.python.org/downloads/
 - Git: https://git-scm.com/downloads
