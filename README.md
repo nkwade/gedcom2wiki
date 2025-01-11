@@ -6,6 +6,9 @@ I built this because 1) sharing family trees from standard websites like Ancestr
 
 Hope this helps your family tree! PLEASE REACH OUT IF YOU ARE INTERESTED IN DEVELOPING A BETTER FRONTEND FOR THIS!!!
 
+### Disclaimer
+I've been told by people that I should add a disclaimer that this program DOES NOT privatize any information at all. I don't plan on writing a module for this on the Python code, but if I make this a Gramps add-on I will use their module to help detect living people and privatize that information. Keeping information private is up to you, password/permission protect any Wiki files you want to upload to the internet if you choose to do so. 
+
 ## Link to example Royal Family Tree Wiki
 https://wade.dev/royaltreewiki/index.html
 
