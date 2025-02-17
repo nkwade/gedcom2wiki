@@ -7,6 +7,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# My personal tree I use for testing since I am familiar with its contents
+wade.ged
+
 # C extensions
 *.so
 

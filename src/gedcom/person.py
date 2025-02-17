@@ -38,10 +38,10 @@ class Person:
         elif fact.tag == GedcomTag.DEAT:
             if fact.value == "Y":
                 self.death = "Dead"
-            else:
-                for sub in fact.sub_facts:
-                    if GedcomTag.DATE == sub.tag:
-                        self.death = sub.value
+
+            for sub in fact.sub_facts:
+                if GedcomTag.DATE == sub.tag:
+                    self.death = sub.value
         elif fact.tag == GedcomTag.NAME:
             fact.value = "".join([c for c in fact.value if c != "/"])
             if fact.value != "":

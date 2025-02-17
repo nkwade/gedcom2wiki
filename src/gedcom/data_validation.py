@@ -146,7 +146,9 @@ def validate_family_tree(family_tree: FamilyTree) -> dict:
         if not person.birthday:
             missing.append("Birth")
 
-        if person.death == "Dead":
+        if (
+            person.death == "Dead"
+        ):  # If there is a date attached person.death will be a datetime object
             missing.append("Death")
         if missing:
             missing_common_facts.append(
@@ -165,10 +167,6 @@ def validate_family_tree(family_tree: FamilyTree) -> dict:
 
 def extract_year(date_str: str | None) -> int | None:
     """Extract year from a date string."""
-    try:
-        return int(str(date_str).split()[-1])
-    except (ValueError, AttributeError, IndexError):
-        return None
 
 
 def generate_validation_html(family_tree: FamilyTree) -> str:
@@ -204,13 +202,19 @@ def generate_validation_html(family_tree: FamilyTree) -> str:
                 issues["Missing Common Facts"],
                 key=lambda x: extract_sortable_name(x["name"]),
             )
-            html += "<h2>Missing Common Facts</h2><ul>"
+            html += "<h2>Missing Common Facts</h2>"
+            facts_by_type = defaultdict(list)
             for entry in sorted_missing:
-                name = entry["name"]
-                person_id = entry["id"]
-                missing = ", ".join(entry["missing_facts"])
-                html += f"<li>{person_id}: Missing {missing}</li>"
-            html += "</ul>"
+                for fact in entry["missing_facts"]:
+                    facts_by_type[fact].append(entry)
+
+            for fact_type in sorted(facts_by_type.keys()):
+                html += f"<h3>{fact_type}</h3><ul>"
+                for entry in facts_by_type[fact_type]:
+                    name = entry["name"]
+                    person_id = entry["id"]
+                    html += f"<li>{person_id}: {name}</li>"
+                html += "</ul>"
 
     return html
 

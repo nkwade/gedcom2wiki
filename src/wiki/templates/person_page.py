@@ -246,4 +246,20 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
     <div style="clear:both;"></div>
     """
 
+    missing_citations = []
+    facts_needing_citations = [
+        GedcomTag.BIRT,
+        GedcomTag.DEAT,
+        GedcomTag.MARR,
+    ]
+    for fact in person.facts:
+        if not any(sub.tag == GedcomTag.SOUR for sub in fact.sub_facts) and fact.tag in facts_needing_citations:
+            missing_citations.append(fact)
+
+    if missing_citations:
+        content += "<h2>Missing Source Citation</h2><ul>"
+        for fact in missing_citations:
+            content += f"<li>{fact.tag.value}</li>"
+        content += "</ul>"
+
     return html_page(name, content, depth=1)
