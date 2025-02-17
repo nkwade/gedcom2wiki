@@ -2,9 +2,15 @@
 Convert GEDCOM to a Wiki style family tree along with some data validation on the tree. This program will go through a GEDCOM file and generate a Wikipedia-style page for the whole family tree, a page for each family, a page for each person, and a data validation report. 
 
 Most examples I've seen online either require you to post information to a public website or are old outdated programs, so I decided to make my own.
-I built this because 1) sharing family trees from standard websites like Ancestry.com or MyHeritage.com sucks and 2) they are great to edit and research family trees, but suck for just viewing people/families. Being able to easily just search a person or family and then reading all their facts and click through to other people is much more intuative for those that haven't used the standard websites.
+I built this because 1) sharing family trees from standard websites like Ancestry.com or MyHeritage.com sucks and 2) they are great to edit and research family trees, but suck for just viewing people/families. Being able to easily just search a person or family and then reading all their facts and click through to other people is much more intuitive for those that haven't used the standard websites.
 
 Hope this helps your family tree! PLEASE REACH OUT IF YOU ARE INTERESTED IN DEVELOPING A BETTER FRONTEND FOR THIS!!!
+
+### Disclaimer
+I've been told by people that I should add a disclaimer that this program DOES NOT privatize any information at all. I don't plan on writing a module for this on the Python code, but if I make this a Gramps add-on I will use their module to help detect living people and privatize that information. Keeping information private is up to you, password/permission protect any Wiki files you want to upload to the internet if you choose to do so. 
+
+## Link to example Royal Family Tree Wiki
+https://wade.dev/royaltreewiki/index.html
 
 ## Requirements
 - Python 3+ (personally used 3.10): https://www.python.org/downloads/
