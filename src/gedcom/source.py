@@ -12,6 +12,12 @@ class Source:
 
         self.parse_facts()
 
+    @property
+    def display_name(self) -> str:
+        if self.title != "Unknown":
+            return self.title
+        return self.xref_id
+
     def parse_facts(self) -> None:
         to_remove: list[Fact] = []  # remove used facts that have no subfacts
         for sub in self.facts:

@@ -3,6 +3,8 @@ from gedcom.family import Family
 from gedcom.person import Person
 from gedcom.fact import Fact, GedcomTag
 from wiki.templates.base_html import html_page
+import html as html_package
+from markupsafe import Markup
 
 
 def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
@@ -261,19 +263,37 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
 
     members_section += "</table>"
 
+    def render_fact(fact: Fact):
+        value_text = ""
+        if fact.value:
+            if fact.tag == GedcomTag.TEXT or fact.tag == GedcomTag.NOTE:
+                # Double unescape: first for HTML entities in the stored value,
+                # then for the HTML entities in the content itself
+                unescaped = html_package.unescape(html_package.unescape(fact.value))
+                value_text = f": {Markup(unescaped)}"
+            elif fact.tag == GedcomTag.SOUR:
+                # Handle source references like @S500010@
+                source_id = fact.value
+                if source_id in family_tree.sources:
+                    source = family_tree.sources[source_id]
+                    value_text = f': <a href="../sources/{source_id}.html">{source.display_name}</a>'
+                else:
+                    value_text = f": {fact.value}"
+            else:
+                value_text = f": {fact.value}"
+
+        html_content = f"<li>{fact.tag.value}{value_text}"
+
+        if fact.sub_facts:
+            html_content += "<ul>"
+            for sub_fact in fact.sub_facts:
+                html_content += render_fact(sub_fact)
+            html_content += "</ul>"
+        html_content += "</li>"
+        return html_content
+
     facts_section = ""
     if family.facts:
-
-        def render_fact(fact: Fact):
-            html = f"<li>{fact.tag.value}: {fact.value}"
-            if fact.sub_facts:
-                html += "<ul>"
-                for sub_fact in fact.sub_facts:
-                    html += render_fact(sub_fact)
-                html += "</ul>"
-            html += "</li>"
-            return html
-
         facts_section = "<h2>Family Facts</h2><ul>"
         for fact in family.facts:
             if (

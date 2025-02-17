@@ -5,6 +5,7 @@ from gedcom.person import Person
 from gedcom.fact import GedcomTag, Fact
 from .base_html import html_page
 from datetime import datetime
+from markupsafe import Markup
 
 
 def extract_year_from_string(date_str: str) -> int | None:
@@ -58,7 +59,7 @@ import html as html_package
 import html2text
 
 
-def render_fact_li_bfs(root_fact: Fact) -> str:
+def render_fact_li_bfs(root_fact: Fact, family_tree: FamilyTree) -> str:
     """
     Returns a nested <ul><li>...</li></ul> string for 'root_fact'
     and all subfacts, using BFS under the hood to gather them.
@@ -67,9 +68,26 @@ def render_fact_li_bfs(root_fact: Fact) -> str:
 
     def build_html(fact_id: int) -> str:
         fact = facts_map[fact_id]
-        fact_text = html2text.html2text(html_package.unescape(fact.value))
-        # fact_text = html_package.unescape(html2text.html2text(fact.value))
-        html = f"<li>{fact.tag.value}: {fact_text}"
+
+        # Handle different fact types
+        if fact.tag == GedcomTag.SOUR:
+            # Handle source references like @S500010@
+            source_id = fact.value
+            if source_id in family_tree.sources:
+                source = family_tree.sources[source_id]
+                value_text = (
+                    f'<a href="../sources/{source_id}.html">{source.display_name}</a>'
+                )
+            else:
+                value_text = fact.value
+        elif fact.tag == GedcomTag.TEXT or fact.tag == GedcomTag.NOTE:
+            # Double unescape text content and mark as safe HTML
+            unescaped = html_package.unescape(html_package.unescape(fact.value))
+            value_text = str(Markup(unescaped))
+        else:
+            value_text = html_package.unescape(fact.value)
+
+        html = f"<li>{fact.tag.value}: {value_text}"
 
         children = adjacency_map.get(fact_id, [])
         if children:
@@ -194,24 +212,24 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
             if early_life_facts:
                 facts_section += f"<h3>Early Life ({birth_year} - {birth_year+18})</h3><ul class='facts'>"
                 for f in early_life_facts:
-                    facts_section += render_fact_li_bfs(f)
+                    facts_section += render_fact_li_bfs(f, family_tree)
                 facts_section += "</ul>"
 
             if mid_life_facts:
                 facts_section += f"<h3>Mid Life ({birth_year+19} - {birth_year+65})</h3><ul class='facts'>"
                 for f in mid_life_facts:
-                    facts_section += render_fact_li_bfs(f)
+                    facts_section += render_fact_li_bfs(f, family_tree)
                 facts_section += "</ul>"
 
             if late_life_facts:
                 facts_section += f"<h3>Late Life ({birth_year+66} - {death_year})</h3><ul class='facts'>"
                 for f in late_life_facts:
-                    facts_section += render_fact_li_bfs(f)
+                    facts_section += render_fact_li_bfs(f, family_tree)
                 facts_section += "</ul>"
         if other_facts:
             facts_section += "<h3>Other Facts</h3><ul class='facts'>"
             for f in other_facts:
-                facts_section += render_fact_li_bfs(f)
+                facts_section += render_fact_li_bfs(f, family_tree)
             facts_section += "</ul>"
 
     image_html = ""
@@ -253,7 +271,10 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
         GedcomTag.MARR,
     ]
     for fact in person.facts:
-        if not any(sub.tag == GedcomTag.SOUR for sub in fact.sub_facts) and fact.tag in facts_needing_citations:
+        if (
+            not any(sub.tag == GedcomTag.SOUR for sub in fact.sub_facts)
+            and fact.tag in facts_needing_citations
+        ):
             missing_citations.append(fact)
 
     if missing_citations:
