@@ -1,3 +1,4 @@
+import os
 from gedcom.tree import FamilyTree
 from gedcom.family import Family
 from gedcom.person import Person
@@ -5,6 +6,11 @@ from gedcom.fact import Fact, GedcomTag
 from wiki.templates.base_html import html_page
 import html as html_package
 from markupsafe import Markup
+
+
+def _path_to_url(path: str) -> str:
+    """Convert OS path to URL format with forward slashes"""
+    return path.replace(os.sep, "/")
 
 
 def render_family_chart(family_tree: FamilyTree, family: Family) -> str:
@@ -232,17 +238,20 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
     if family.husb and family.husb in family_tree.persons:
         husb = family_tree.persons[family.husb]
         husb_name = husb.name if husb.name else family.husb
-        husb_link = f'<a href="../persons/{family.husb}.html">{husb_name}</a>'
+        href = _path_to_url(os.path.join("..", "persons", f"{family.husb}.html"))
+        husb_link = f'<a href="{href}">{husb_name}</a>'
     if family.wife and family.wife in family_tree.persons:
         wife = family_tree.persons[family.wife]
         wife_name = wife.name if wife.name else family.wife
-        wife_link = f'<a href="../persons/{family.wife}.html">{wife_name}</a>'
+        href = _path_to_url(os.path.join("..", "persons", f"{family.wife}.html"))
+        wife_link = f'<a href="{href}">{wife_name}</a>'
 
     for c in family.children:
         if c in family_tree.persons:
             child = family_tree.persons[c]
             child_name = child.name if child.name else c
-            children_links.append(f'<a href="../persons/{c}.html">{child_name}</a>')
+            href = _path_to_url(os.path.join("..", "persons", f"{c}.html"))
+            children_links.append(f'<a href="{href}">{child_name}</a>')
 
     members_section = "<h2>Family Members</h2><table><tr><th>Role</th><th>Name</th><th>Birth</th><th>Death</th><th>Sex</th></tr>"
 
@@ -251,7 +260,8 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
         death = p.death if p.death else ""
         sex = p.sex.value if p.sex else ""
         name_display = p.name if p.name else p.xref_id
-        return f"<tr><td>{role}</td><td><a href='../persons/{p.xref_id}.html'>{name_display}</a></td><td>{birth}</td><td>{death}</td><td>{sex}</td></tr>"
+        href = _path_to_url(os.path.join("..", "persons", f"{p.xref_id}.html"))
+        return f'<tr><td>{role}</td><td><a href="{href}">{name_display}</a></td><td>{birth}</td><td>{death}</td><td>{sex}</td></tr>'
 
     if family.husb and family.husb in family_tree.persons:
         members_section += person_row("Father", family_tree.persons[family.husb])
@@ -276,7 +286,10 @@ def render_family_page(family_tree: FamilyTree, family: Family) -> str:
                 source_id = fact.value
                 if source_id in family_tree.sources:
                     source = family_tree.sources[source_id]
-                    value_text = f': <a href="../sources/{source_id}.html">{source.display_name}</a>'
+                    href = _path_to_url(
+                        os.path.join("..", "sources", f"{source_id}.html")
+                    )
+                    value_text = f': <a href="{href}">{source.display_name}</a>'
                 else:
                     value_text = f": {fact.value}"
             else:

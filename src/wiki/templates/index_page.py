@@ -1,5 +1,11 @@
+import os
 from wiki.templates.base_html import html_page
 from gedcom.tree import FamilyTree
+
+
+def _path_to_url(path: str) -> str:
+    """Convert OS path to URL format with forward slashes"""
+    return path.replace(os.sep, "/")
 
 
 def render_index_page(family_tree: FamilyTree) -> str:
@@ -34,7 +40,8 @@ def render_index_page(family_tree: FamilyTree) -> str:
         "<ul>"
     )
     for fam_id, family in family_tree.families.items():
-        family_list += f'<li><a href="families/{fam_id}.html">{family.name}</a></li>'
+        href = _path_to_url(os.path.join("families", f"{fam_id}.html"))
+        family_list += f'<li><a href="{href}">{family.name}</a></li>'
     family_list += "</ul></div>"
 
     person_list = (
@@ -53,7 +60,8 @@ def render_index_page(family_tree: FamilyTree) -> str:
     )
     for person_id, person in sorted_persons:
         name_display = person.name if person.name else person_id
-        person_list += f'<li><a href="persons/{person_id}.html">{name_display}</a></li>'
+        href = _path_to_url(os.path.join("persons", f"{person_id}.html"))
+        person_list += f'<li><a href="{href}">{name_display}</a></li>'
     person_list += "</ul></div>"
 
     source_list = (
@@ -67,9 +75,8 @@ def render_index_page(family_tree: FamilyTree) -> str:
     )
     for source_id, source in sorted_sources:
         title_display = source.title if source.title else source_id
-        source_list += (
-            f'<li><a href="sources/{source_id}.html">{title_display}</a></li>'
-        )
+        href = _path_to_url(os.path.join("sources", f"{source_id}.html"))
+        source_list += f'<li><a href="{href}">{title_display}</a></li>'
     source_list += "</ul></div>"
 
     validation_report_link = "<h2>Data Validation Report</h2><p><a href='validation.html'>View Validation Report</a></p>"
