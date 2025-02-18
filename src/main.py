@@ -32,6 +32,7 @@ def main(
     write_cache: bool = True,
     validate: bool = True,
     force: bool = False,
+    use_llm: bool = False,
 ) -> None:
 
     start = last = time.time()
@@ -72,7 +73,7 @@ def main(
         last = time.time()
 
     # Generate wiki pages for family tree
-    generate_wiki_pages(ft, output_path, validate)
+    generate_wiki_pages(ft, output_path, validate, use_llm)
     print(f"Time to generate wiki pages: {time.time() - last:.2f}")
     last = time.time()
 
@@ -115,6 +116,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--force", action="store_true", help="Forces parsing of Gedcom file"
     )
+    parser.add_argument(
+        "--use_llm",
+        action="store_true",
+        help="Generate LLM biographies for persons",
+    )
 
     args = parser.parse_args()
     main_kwargs = {}
@@ -134,5 +140,7 @@ if __name__ == "__main__":
         main_kwargs["validate"] = args.validate
     if args.force:
         main_kwargs["force"] = args.force
+    if args.use_llm:
+        main_kwargs["use_llm"] = args.use_llm
 
     main(**main_kwargs)

@@ -6,6 +6,8 @@ from gedcom.fact import GedcomTag, Fact
 from .base_html import html_page
 from datetime import datetime
 from markupsafe import Markup
+import html as html_package
+from llm.llama import generate_bio
 
 
 def extract_year_from_string(date_str: str) -> int | None:
@@ -55,10 +57,6 @@ def build_fact_adjacency_bfs(
     return facts_map, adjacency_map
 
 
-import html as html_package
-import html2text
-
-
 def render_fact_li_bfs(root_fact: Fact, family_tree: FamilyTree) -> str:
     """
     Returns a nested <ul><li>...</li></ul> string for 'root_fact'
@@ -103,7 +101,9 @@ def render_fact_li_bfs(root_fact: Fact, family_tree: FamilyTree) -> str:
     return f"<ul>{build_html(root_id)}</ul>"
 
 
-def render_person_page(family_tree: FamilyTree, person: Person) -> str:
+def render_person_page(
+    family_tree: FamilyTree, person: Person, use_llm: bool = False
+) -> str:
     out_dir = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "..", "..", "..", "out")
     )
@@ -255,10 +255,16 @@ def render_person_page(family_tree: FamilyTree, person: Person) -> str:
             gallery_section += f'<div><img src="{img_src}" alt="{name}" style="max-width:200px; height:auto; border:1px solid #ccc; padding:5px;"/></div>'
         gallery_section += "</div>"
 
+    bio_section = ""
+    if use_llm:
+        bio = generate_bio(person, family_tree)
+        bio_section = f"<h2>Biography</h2><p>{bio}</p>"
+
     content = f"""
     <h1>{name}</h1>
     {info_section}
     {families_section}
+    {bio_section}
     {facts_section}
     {gallery_section}
     <div style="clear:both;"></div>
