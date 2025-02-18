@@ -4,6 +4,11 @@ from wiki.templates.base_html import html_page
 from gedcom.tree import FamilyTree
 
 
+def _path_to_url(path: str) -> str:
+    """Convert OS path to URL format with forward slashes"""
+    return path.replace(os.sep, "/")
+
+
 def render_report_page(data_validation_html: str, family_tree: FamilyTree) -> str:
     """Render the data validation report into an HTML page with hyperlinks for person/family IDs."""
 
@@ -12,11 +17,13 @@ def render_report_page(data_validation_html: str, family_tree: FamilyTree) -> st
         if tag_type == "I":
             person = family_tree.persons.get(match.group(0))
             name = person.name if person and person.name else match.group(0)
-            return f'<a href="./persons/{match.group(0)}.html">{name}</a>'
+            href = _path_to_url(os.path.join(".", "persons", f"{match.group(0)}.html"))
+            return f'<a href="{href}">{name}</a>'
         elif tag_type == "F":
             family = family_tree.families.get(match.group(0))
             name = family.name if family and family.name else match.group(0)
-            return f'<a href="./families/{match.group(0)}.html">{name}</a>'
+            href = _path_to_url(os.path.join(".", "families", f"{match.group(0)}.html"))
+            return f'<a href="{href}">{name}</a>'
         return match.group(0)  # No change if not I or F
 
     # Replace @Ixxx@ and @Fxxx@ with hyperlinks
