@@ -9,7 +9,10 @@ from gedcom.data_validation import generate_validation_html
 
 
 def generate_wiki_pages(
-    family_tree: FamilyTree, output_path: str, validate: bool = True
+    family_tree: FamilyTree,
+    output_path: str,
+    validate: bool = True,
+    use_llm: bool = False,
 ) -> None:
     """
     Generate static HTML pages from the FamilyTree data structure.
@@ -42,7 +45,7 @@ def generate_wiki_pages(
 
     # Generate person pages
     for person_id, person in family_tree.persons.items():
-        person_html = render_person_page(family_tree, person)
+        person_html = render_person_page(family_tree, person, use_llm)
         with open(
             os.path.join(persons_dir, f"{person_id}.html"), "w", encoding="utf-8"
         ) as f:
