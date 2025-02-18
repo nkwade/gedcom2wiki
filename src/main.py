@@ -1,23 +1,23 @@
 import argparse
 import time
-import os
+from pathlib import Path
+import pickle
 
 from gedcom.tree import FamilyTree
 from graph.tree_builder import generate_hierarchical_tree
 from gedcom.parse import parse
 from wiki.build import generate_wiki_pages
-import pickle
 
 
-def write_to_cache(ft: FamilyTree, output_folder: str):
-    cache_file = os.path.join(output_folder, "cache.pkl")
+def write_to_cache(ft: FamilyTree, output_folder: Path):
+    cache_file = output_folder / "cache.pkl"
     with open(cache_file, "wb") as f:
         pickle.dump(ft, f)
 
 
-def load_from_cache(output_folder: str) -> FamilyTree | None:
-    cache_file = os.path.join(output_folder, "cache.pkl")
-    if os.path.exists(cache_file):
+def load_from_cache(output_folder: Path) -> FamilyTree | None:
+    cache_file = output_folder / "cache.pkl"
+    if cache_file.exists():
         with open(cache_file, "rb") as f:
             return pickle.load(f)
     return None
@@ -37,8 +37,10 @@ def main(
 
     start = last = time.time()
 
-    if not os.path.exists(output_path):
-        os.makedirs(output_path)
+    # Convert paths to Path objects
+    ged_path = Path(ged_path)
+    output_path = Path(output_path)
+    output_path.mkdir(parents=True, exist_ok=True)
 
     # Parse GEDCOM file
     ft: FamilyTree | None = None
@@ -56,12 +58,14 @@ def main(
         return
 
     if graph:
-        generate_hierarchical_tree(ft, "out/graph/")
+        graph_path = output_path / "graph"
+        generate_hierarchical_tree(ft, graph_path)
         print(f"Time to generate graph tree: {time.time() - last:.2f}")
         last = time.time()
 
     if verbose:
-        with open("out/verbose.txt", "w", encoding="utf-8", errors="ignore") as f:
+        verbose_file = output_path / "verbose.txt"
+        with open(verbose_file, "w", encoding="utf-8", errors="ignore") as f:
             for person_id, person in ft.persons.items():
                 f.write(person.__repr__() + "\n")
         print(f"Time to write log file: {time.time() - last:.2f}")
@@ -78,10 +82,11 @@ def main(
     last = time.time()
 
     print(f"Total Time: {time.time() - start:.2f} Seconds")
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    wiki_path = os.path.join(project_root, output_path, "index.html")
-    wiki_path = wiki_path.replace("\\", "/")
-    print(f"Open the wiki at: file:///{wiki_path}")
+
+    # Create platform-independent path to index.html
+    project_root = Path(__file__).parent.parent
+    wiki_path = (project_root / output_path / "index.html").resolve()
+    print(f"Open the wiki at: {wiki_path.as_uri()}")
 
 
 if __name__ == "__main__":

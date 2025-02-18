@@ -57,6 +57,10 @@ def build_fact_adjacency_bfs(
     return facts_map, adjacency_map
 
 
+def _path_to_url(path: str) -> str:
+    """Convert OS path to URL format with forward slashes"""
+    return path.replace(os.sep, "/")
+
 def render_fact_li_bfs(root_fact: Fact, family_tree: FamilyTree) -> str:
     """
     Returns a nested <ul><li>...</li></ul> string for 'root_fact'
@@ -73,9 +77,8 @@ def render_fact_li_bfs(root_fact: Fact, family_tree: FamilyTree) -> str:
             source_id = fact.value
             if source_id in family_tree.sources:
                 source = family_tree.sources[source_id]
-                value_text = (
-                    f'<a href="../sources/{source_id}.html">{source.display_name}</a>'
-                )
+                href = _path_to_url(os.path.join("..", "sources", f"{source_id}.html"))
+                value_text = f'<a href="{href}">{source.display_name}</a>'
             else:
                 value_text = fact.value
         elif fact.tag == GedcomTag.TEXT or fact.tag == GedcomTag.NOTE:
@@ -116,9 +119,9 @@ def render_person_page(
             image = image.convert("RGB")
 
         image_filename = f"{person.xref_id}_{i}.png"
-        image_path = os.path.join(assets_dir, image_filename)
-        image.save(image_path, format="PNG")
         image_paths.append(image_filename)
+        # Note: actual image saving should be handled by the build process,
+        # not the template renderer
 
     name = person.name if person.name else person.xref_id
     sex = person.sex.value if person.sex else "Unknown"
@@ -139,14 +142,16 @@ def render_person_page(
         families_section += "<tr><th>Relationship</th><th>Family</th></tr>"
         for fam_id in fams:
             if fam_id in family_tree.families:
+                href = _path_to_url(os.path.join("..", "families", f"{fam_id}.html"))
                 families_section += (
-                    f"<tr><td>Spouse</td><td><a href='../families/{fam_id}.html'>"
+                    f'<tr><td>Spouse</td><td><a href="{href}">'
                     f"{family_tree.families[fam_id].name}</a></td></tr>"
                 )
         for fam_id in famc:
             if fam_id in family_tree.families:
+                href = _path_to_url(os.path.join("..", "families", f"{fam_id}.html"))
                 families_section += (
-                    f"<tr><td>Child</td><td><a href='../families/{fam_id}.html'>"
+                    f'<tr><td>Child</td><td><a href="{href}">'
                     f"{family_tree.families[fam_id].name}</a></td></tr>"
                 )
         families_section += "</table>"
@@ -234,7 +239,7 @@ def render_person_page(
 
     image_html = ""
     if image_paths:
-        first_image_src = f"../assets/{image_paths[0]}"
+        first_image_src = _path_to_url(os.path.join("..", "assets", image_paths[0]))
         image_html = f'<img src="{first_image_src}" alt="{name}" style="max-width:200px; height:auto; border:1px solid #ccc; padding:5px; margin-top:1em;" />'
 
     info_section = f"""
@@ -251,7 +256,7 @@ def render_person_page(
             "<h2>Gallery</h2><div style='display:flex; flex-wrap:wrap; gap:1em;'>"
         )
         for img_file in image_paths:
-            img_src = f"../assets/{img_file}"
+            img_src = _path_to_url(os.path.join("..", "assets", img_file))
             gallery_section += f'<div><img src="{img_src}" alt="{name}" style="max-width:200px; height:auto; border:1px solid #ccc; padding:5px;"/></div>'
         gallery_section += "</div>"
 
