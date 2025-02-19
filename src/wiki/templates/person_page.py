@@ -61,6 +61,7 @@ def _path_to_url(path: str) -> str:
     """Convert OS path to URL format with forward slashes"""
     return path.replace(os.sep, "/")
 
+
 def render_fact_li_bfs(root_fact: Fact, family_tree: FamilyTree) -> str:
     """
     Returns a nested <ul><li>...</li></ul> string for 'root_fact'
@@ -243,10 +244,14 @@ def render_person_page(
         image_html = f'<img src="{first_image_src}" alt="{name}" style="max-width:200px; height:auto; border:1px solid #ccc; padding:5px; margin-top:1em;" />'
 
     info_section = f"""
-    <div style="float:right; width:300px; margin-left:1em;">
+    <div class="info-panel">
         <h2>Basic Information</h2>
-        {basic_info}
-        {image_html}
+        <div class="info-content">
+            <div class="info-table">
+                {basic_info}
+            </div>
+            {image_html}
+        </div>
     </div>
     """
 

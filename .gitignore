@@ -1,6 +1,6 @@
 # All GEDCOM files 
 wade.txt
-out/
+out*/
 .VSCodeCounter/
 # Byte-compiled / optimized / DLL files
 __pycache__/
