@@ -80,9 +80,12 @@ After running the program you will see a line giving you the direct link that sh
 Example line: `Open the wiki at: file:///D:/dev/gedcom2wiki/out/index.html`
 
 ## Example Images Of Wiki
-![image](https://github.com/user-attachments/assets/4a97a542-7cce-4058-9c3f-31898fdd28b9)
-![image](https://github.com/user-attachments/assets/aad4f067-b171-4cd6-a246-e2b0008fa9c9)
-![image](https://github.com/user-attachments/assets/b312c5d9-51cf-4ada-8254-cc8b90846a9b)
+![image](https://github.com/user-attachments/assets/510412cd-6bce-4088-8dc9-aed0028373e5)
+![image](https://github.com/user-attachments/assets/6634ab1e-23e0-4393-9696-9f190f48a79a)
+![image](https://github.com/user-attachments/assets/020c437d-c922-4a3c-9096-ea56d9bb65cf)
+![image](https://github.com/user-attachments/assets/27c836c5-30f4-4072-96e8-f655b1abe8eb)
+
+
 
 
 ## Support
